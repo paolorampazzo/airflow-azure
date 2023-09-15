@@ -69,6 +69,7 @@ with DAG(
         """Print the Airflow context and ds variable from the context."""
         pprint(kwargs)
         print(ds)
+        print('TESTE')
         print(dag.params)
         return "Whatever you return gets printed in the logs"
 
