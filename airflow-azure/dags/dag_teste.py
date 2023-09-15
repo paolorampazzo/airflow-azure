@@ -59,10 +59,9 @@ with DAG(
     catchup=False,
     tags=["example"],
     params={
-        "memory_request_gib": Param(2, type="number", title="memory_request_gib (default = 2)"),
-        "memory_limit_gib": Param(0, type="number", title="memory_limit_gib (default = infinity)"),
-        "cpu_request_milicore": Param(100, type="number", title="memory_request_gib (default = 100m)"),
-        "cpu_limit_milicore": Param(0, type="number", title="memory_request_gib (default = infinity)"),
+        "memory_request": Param(2, type="number", title="memory_request_gib (default = 2)"),
+        "memory_limit": Param(0, type="number", title="memory_limit_gib (default = infinity)"),
+        "cpu_request": Param(100, type="number", title="memory_request_gib (default = 100m)"),
     }
 ) as dag:
     
