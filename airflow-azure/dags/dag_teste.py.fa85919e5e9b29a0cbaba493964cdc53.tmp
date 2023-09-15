@@ -51,6 +51,7 @@ def get_specifications_from_ui_params(params):
                 data[value] = str(params[value]) + 'Gi'
             if 'cpu' in value:
                 data[value] = str(params[value]) + 'm'
+                
     return data
 
 with DAG(
