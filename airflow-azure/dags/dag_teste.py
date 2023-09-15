@@ -101,12 +101,11 @@ with DAG(
     start_task = PythonOperator(
             task_id="start_task",
             python_callable=teste,
-            # executor_config=define_k8s_specs(**get_specifications_from_ui_params(dag.params), other_specs={})
         )
 
 
     run_this = print_context()
-    start_task
+    # start_task
     # [END howto_operator_python]
 
 
