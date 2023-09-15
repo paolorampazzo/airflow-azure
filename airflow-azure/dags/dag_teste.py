@@ -32,6 +32,7 @@ import pendulum
 from airflow import DAG
 from airflow.decorators import task
 from airflow.operators.python import ExternalPythonOperator, PythonVirtualenvOperator
+from airflow.models.param import Param
 from utils.k8s_specs import define_k8s_specs 
 
 log = logging.getLogger(__name__)
@@ -51,14 +52,25 @@ with DAG(
     start_date=pendulum.datetime(2021, 1, 1, tz="UTC"),
     catchup=False,
     tags=["example"],
+    params={
+        "memory_request_gib": Param(2, type="number", title="memory_request_gib (default = 2)"),
+        "memory_limit_gib": Param(0, type="number", title="memory_limit_gib (default = infinity)"),
+        "cpu_request_milicore": Param(100, type="number", title="memory_request_gib (default = 100m)"),
+        "cpu_limit_milicore": Param(0, type="number", title="memory_request_gib (default = infinity)"),
+    }
 ) as dag:
+    
+    # memory_request = 
 
     # [START howto_operator_python]
-    @task(task_id="print_the_context", executor_config=define_k8s_specs(memory_request='2Gi', other_specs={}))
+    @task(params, task_id="print_the_context",
+          executor_config=define_k8s_specs(memory_request='2Gi', other_specs={}),
+          )
     def print_context(ds=None, **kwargs):
         """Print the Airflow context and ds variable from the context."""
         pprint(kwargs)
         print(ds)
+        print(params)
         return "Whatever you return gets printed in the logs"
 
     run_this = print_context()
