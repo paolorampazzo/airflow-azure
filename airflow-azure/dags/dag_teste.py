@@ -96,7 +96,7 @@ with DAG(
     
     def teste(**kwargs):
        print('TI')
-       print(kwargs['ti'])
+       print(kwargs['ti']['params'])
     
     start_task = PythonOperator(
             task_id="start_task",
