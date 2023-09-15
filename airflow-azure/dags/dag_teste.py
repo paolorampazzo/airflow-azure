@@ -32,6 +32,7 @@ import pendulum
 from airflow import DAG
 from airflow.decorators import task
 from airflow.operators.python import ExternalPythonOperator, PythonVirtualenvOperator
+from airflow.operators.python import PythonOperator
 from airflow.models.param import Param
 from utils.k8s_specs import define_k8s_specs 
 
@@ -92,8 +93,22 @@ with DAG(
            print("Erro 2")
 
         return "Whatever you return gets printed in the logs"
+    
+    def teste(**kwargs):
+       print('kwargs')
+       print(kwargs)
+    
+    start_task = PythonOperator(
+            task_id="start_task",
+            python_callable=teste,
+            # executor_config={
+            #     "pod_override": k8s.V1Pod(metadata=k8s.V1ObjectMeta(annotations={"test": "annotation"}))
+            # },
+        )
+
 
     run_this = print_context()
+    start_task
     # [END howto_operator_python]
 
 
