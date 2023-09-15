@@ -65,8 +65,6 @@ with DAG(
     }
 ) as dag:
     
-    # memory_request = 
-
     # [START howto_operator_python]
     # @task(task_id="print_the_context",
     #       executor_config=define_k8s_specs(memory_request='2Gi', other_specs={}))
