@@ -32,7 +32,7 @@ import pendulum
 from airflow import DAG
 from airflow.decorators import task
 from airflow.operators.python import ExternalPythonOperator, PythonVirtualenvOperator
-from utils.k8s_specs import define_k8s_specs
+from utils.k8s_specs import define_k8s_specs 
 
 log = logging.getLogger(__name__)
 
