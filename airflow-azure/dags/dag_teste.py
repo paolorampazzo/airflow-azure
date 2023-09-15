@@ -95,15 +95,13 @@ with DAG(
         return "Whatever you return gets printed in the logs"
     
     def teste(**kwargs):
-       print('kwargs')
-       print(kwargs)
+       print('TI')
+       print(kwargs['ti'])
     
     start_task = PythonOperator(
             task_id="start_task",
             python_callable=teste,
-            # executor_config={
-            #     "pod_override": k8s.V1Pod(metadata=k8s.V1ObjectMeta(annotations={"test": "annotation"}))
-            # },
+            # executor_config=define_k8s_specs(**get_specifications_from_ui_params(dag.params), other_specs={})
         )
 
 
