@@ -42,9 +42,15 @@ PATH_TO_PYTHON_BINARY = sys.executable
 BASE_DIR = tempfile.gettempdir()
 
 
-def x():
-    pass 
-
+def get_specifications_from_ui_params(params):
+    data = {}
+    for value in ['memory_request', 'memory_limit', 'cpu_request']:
+      if value in params:
+          if 'memory' in value:
+              data[value] = str(params[value]) + 'Gi'
+          if 'cpu' in value:
+              data[value] = str(params[value]) + 'm'
+    return data
 
 with DAG(
     dag_id="exemplo_do_git",
@@ -63,8 +69,10 @@ with DAG(
     # memory_request = 
 
     # [START howto_operator_python]
+    # @task(task_id="print_the_context",
+    #       executor_config=define_k8s_specs(memory_request='2Gi', other_specs={}))
     @task(task_id="print_the_context",
-          executor_config=define_k8s_specs(memory_request='2Gi', other_specs={}))
+          executor_config=define_k8s_specs(**get_specifications_from_ui_params(dag.params), other_specs={}))
     def print_context(ds=None, **kwargs):
         """Print the Airflow context and ds variable from the context."""
         pprint(kwargs)
