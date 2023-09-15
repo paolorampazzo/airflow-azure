@@ -79,6 +79,18 @@ with DAG(
         # print(ds)
         # print('TESTE')
         # print(dag.params)
+        print('Teste')
+        try:
+           print(set(dag))
+           print('Deu certo1')
+        except:
+           print("Erro 1")
+        try:
+           print(dag.ti)
+           print('Deu certo2')
+        except:
+           print("Erro 2")
+
         return "Whatever you return gets printed in the logs"
 
     run_this = print_context()
