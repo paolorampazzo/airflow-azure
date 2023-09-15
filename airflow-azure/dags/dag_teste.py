@@ -51,7 +51,8 @@ def get_specifications_from_ui_params(params):
                 data[value] = str(params[value]) + 'Gi'
             if 'cpu' in value:
                 data[value] = str(params[value]) + 'm'
-                
+
+    print('MY DATA', data)
     return data
 
 with DAG(
@@ -74,10 +75,10 @@ with DAG(
           executor_config=define_k8s_specs(**get_specifications_from_ui_params(dag.params), other_specs={}))
     def print_context(ds=None, **kwargs):
         """Print the Airflow context and ds variable from the context."""
-        pprint(kwargs)
-        print(ds)
-        print('TESTE')
-        print(dag.params)
+        # pprint(kwargs)
+        # print(ds)
+        # print('TESTE')
+        # print(dag.params)
         return "Whatever you return gets printed in the logs"
 
     run_this = print_context()
