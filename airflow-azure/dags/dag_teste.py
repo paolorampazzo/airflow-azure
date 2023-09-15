@@ -62,11 +62,11 @@ with DAG(
     start_date=pendulum.datetime(2021, 1, 1, tz="UTC"),
     catchup=False,
     tags=["example"],
-    params={
-        "memory_request": Param(2, type="number", title="memory_request_gib (default = 2)"),
-        "memory_limit": Param(0, type="number", title="memory_limit_gib (default = infinity)"),
-        "cpu_request": Param(100, type="number", title="memory_request_gib (default = 100m)"),
-    }
+    # params={
+    #     "memory_request": Param(2, type="number", title="memory_request_gib (default = 2)"),
+    #     "memory_limit": Param(0, type="number", title="memory_limit_gib (default = infinity)"),
+    #     "cpu_request": Param(100, type="number", title="memory_request_gib (default = 100m)"),
+    # }
 ) as dag: 
     
     # [START howto_operator_python]
@@ -98,10 +98,10 @@ with DAG(
        print('TI')
        print(kwargs['ti'].dag_run.conf)
     
-    start_task = PythonOperator(
-            task_id="start_task",
-            python_callable=teste,
-        )
+    # start_task = PythonOperator(
+    #         task_id="start_task",
+    #         python_callable=teste,
+    #     )
 
 
     run_this = print_context()
