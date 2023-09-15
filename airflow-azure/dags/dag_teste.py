@@ -64,13 +64,12 @@ with DAG(
 
     # [START howto_operator_python]
     @task(task_id="print_the_context",
-          executor_config=define_k8s_specs(memory_request='2Gi', other_specs={}),
-          teste=dag.params)
+          executor_config=define_k8s_specs(memory_request='2Gi', other_specs={}))
     def print_context(ds=None, **kwargs):
         """Print the Airflow context and ds variable from the context."""
         pprint(kwargs)
         print(ds)
-        print(teste)
+        print(dag.params)
         return "Whatever you return gets printed in the logs"
 
     run_this = print_context()
