@@ -94,9 +94,9 @@ with DAG(
 
         return "Whatever you return gets printed in the logs"
     
-    def teste(**kwargs):
-       print('TI')
-       print(kwargs['ti'].dag_run.conf)
+    # def teste(**kwargs):
+    #    print('TI')
+    #    print(kwargs['ti'].dag_run.conf)
     
     # start_task = PythonOperator(
     #         task_id="start_task",
