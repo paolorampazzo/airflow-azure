@@ -44,19 +44,6 @@ PATH_TO_PYTHON_BINARY = sys.executable
 BASE_DIR = tempfile.gettempdir()
 
 
-# def get_specifications_from_ui_params(params):
-#     data = {}
-#     for value in ['memory_request', 'memory_limit', 'cpu_request']:
-#       if value in params:
-#           if params[value]:
-#             if 'memory' in value:
-#                 data[value] = str(params[value]) + 'Gi'
-#             if 'cpu' in value:
-#                 data[value] = str(params[value]) + 'm'
-
-#     print('MY DATA', data)
-#     return data
-
 with DAG(
     dag_id="oracle_teste",
     schedule=None,
