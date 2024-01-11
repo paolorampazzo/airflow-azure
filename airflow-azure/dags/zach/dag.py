@@ -28,16 +28,15 @@ with DAG(dag_id="download_videos",
         v1 = client.CoreV1Api()
         yaml_content = """
         apiVersion: v1
-        kind: Service
+        kind: PersistentVolumeClaim
         metadata:
-        name: example-service
+        name: my-pvc
         spec:
-        selector:
-            app: example
-        ports:
-            - protocol: TCP
-            port: 80
-            targetPort: 8080
+        accessModes:
+            - ReadWriteOnce  # or ReadWriteMany, ReadOnlyMany based on your requirements
+        resources:
+            requests:
+            storage: 1Gi  # Specify the amount of storage you need
         """
 
 
