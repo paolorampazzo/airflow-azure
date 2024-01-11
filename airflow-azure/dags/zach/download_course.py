@@ -14,42 +14,11 @@ from utils.download_utils import lista_gen, find_last_true_occurrence
 from airflow.models.dagrun import DagRun
 from airflow.models.taskinstance import TaskInstance
 
-claim_name = 'my-pvc'
-
-with DAG(dag_id="prepare_download", 
+with DAG(dag_id="download_course", 
          start_date=datetime(2024, 1, 10),
          catchup=False,
-         params={
-         "version": Param('v3', enum=["v1", "v2", "v3"]),
-         "cookies": Param('', type='string')
-     },
 ) as dag:
     
-    @task
-    def kubectl():
-        from kubernetes import config, client
-        import yaml
-        
-        config.load_incluster_config()
-        v1 = client.CoreV1Api()
-        
-        yaml_content = lambda claim_name = claim_name: f"""
-        apiVersion: v1
-        kind: PersistentVolumeClaim
-        metadata:
-            name: {claim_name}
-        spec:
-            accessModes:
-                - ReadWriteOnce  # or ReadWriteMany, ReadOnlyMany based on your requirements
-            resources:
-                requests:
-                    storage: 1Gi  # Specify the amount of storage you need
-        """
-
-        resource = yaml.safe_load(yaml_content())
-        api_response = v1.create_namespaced_persistent_volume_claim('airflow-azure-workers', 
-                                                                    resource)
-
 
     @task(executor_config=define_k8s_specs(claim_name))
     def set_jwt():
@@ -116,8 +85,7 @@ with DAG(dag_id="prepare_download",
         lista = [lista_gen(x) for x in lista_urls]       
         max_index = find_last_true_occurrence(lista) 
         
-        return {'name': name, 'type': type, 'max_index': max_index, 
-                'claim_name': claim_name}
+        return {'name': name, 'type': type, 'max_index': max_index}
     
 
     @task_group(group_id='group')
