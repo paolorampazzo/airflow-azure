@@ -124,7 +124,7 @@ with DAG(dag_id="prepare_download",
     def send_to_dag(parameters):
         
         @task
-        def print_params(parameters):
+        def print_params():
             print(parameters)
     
         download_files = TriggerDagRunOperator(
