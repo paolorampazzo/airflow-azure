@@ -27,7 +27,6 @@ with DAG(dag_id="prepare_download",
         
         config.load_incluster_config()
         v1 = client.CoreV1Api()
-        v1.delete_namespaced_persistent_volume_claim
         
         yaml_content = f"""
         apiVersion: v1
@@ -62,12 +61,18 @@ with DAG(dag_id="prepare_download",
     @task
     def delete_pvc():
         from kubernetes import config, client
-        import yaml
         
         config.load_incluster_config()
         v1 = client.CoreV1Api()
+        
+        pvc = client.V1PersistentVolumeClaimSpec()
+        pvc_metadata = client.V1ObjectMeta(name=claim_name)
+        pvc.metadata = pvc_metadata
+        pvc.metadata.finalizers = None
+
         v1.delete_namespaced_persistent_volume_claim(namespace="airflow-azure-workers", name=claim_name)
-    
+        v1.patch_namespaced_persistent_volume_claim(name=claim_name, namespace="airflow-azure-workers", 
+                                                    body=pvc)
     @task
     def get_links():
         import pickle
