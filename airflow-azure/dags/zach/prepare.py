@@ -7,16 +7,22 @@ from airflow.decorators import task, task_group
 from airflow.models.dag import DAG
 from airflow.models.param import Param
 from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperator
+from airflow.operators.trigger_dagrun import TriggerDagRunOperator
 from kubernetes.client import models as k8s
 from utils.k8s_pvc_specs import define_k8s_specs 
+from utils.download_utils import lista_gen, find_last_true_occurrence
+from airflow.models.dagrun import DagRun
+from airflow.models.taskinstance import TaskInstance
 
-claim_name = 'my-pvc2'
+claim_name = 'my-pvc'
 
 with DAG(dag_id="prepare_download", 
          start_date=datetime(2024, 1, 10),
          catchup=False,
          params={
          "x": Param('', type="string"),
+         "version": Param('v3', enum=["v1", "v2", "v3"]),
+         "cookies": Param('', type='string')
      },
 ) as dag:
     
@@ -28,7 +34,7 @@ with DAG(dag_id="prepare_download",
         config.load_incluster_config()
         v1 = client.CoreV1Api()
         
-        yaml_content = f"""
+        yaml_content = lambda claim_name = claim_name: f"""
         apiVersion: v1
         kind: PersistentVolumeClaim
         metadata:
@@ -65,8 +71,8 @@ with DAG(dag_id="prepare_download",
         config.load_incluster_config()
         v1 = client.CoreV1Api()
 
-        pvc = v1.read_namespaced_persistent_volume_claim(name=claim_name, 
-                                                         namespace='airflow-azure-workers')
+        # pvc = v1.read_namespaced_persistent_volume_claim(name=claim_name, 
+        #                                                  namespace='airflow-azure-workers')
         
         
         patch_payload = [
@@ -82,26 +88,47 @@ with DAG(dag_id="prepare_download",
         with open('/opt/airflow/dags/repo/airflow-azure/dags/zach/pages.pkl', 'rb') as f:
             pages = pickle.load(f)
 
-        return [1,2,3]
+        return pages[:2]
     
     @task
-    def get_m3u8(link: int):
-        print('retorno')
-        return link
-    
-    @task
-    def find_last_file(m3u8_file_str: int):
-        print('retorno')
-        return m3u8_file_str
-    
-    @task
-    def download_file(file: int):
-        print('retorno')
-        return file
-    
-    m3u8 = get_m3u8.expand(link = get_links())
-    last_file = find_last_file(m3u8)
-    # download_file.expand(file = list(range(last_file)))
+    def get_parameters(**kwargs):
+        import requests
+        ti: TaskInstance = kwargs["ti"] 
+        dag_run: DagRun = ti.dag_run
+        link = kwargs['link']
 
+        version = dag_run.conf['version']
+        cookies = dag_run.conf['cookies']
+        name = link[link.rfind("/")+1:]
+        # m3u8_page = f'https://dataengineer.io/api/v1/content/video/{version}/{name}/playlist.m3u8'
+        # r = requests.get(m3u8_page, cookies={k['name']: k['value'] for k in cookies})
+        # r = requests.get(m3u8_page, cookies={'jwt': cookies})
+
+        # try:
+        #     assert r.status_code == 200
+        # except Exception as e:
+        #     print('Erro', e)
+
+        prefix = f'https://dataengineer.io/api/v1/content/video/{version}/'
+        type = ('lecture' in name and 'lecture') or ('lab' in name and 'lab') or ('recording')
+        lista_urls = [prefix + f'{name}/{type}{i}.ts' for i in range(0, 2000)]
+        lista = [lista_gen(x) for x in lista_urls]       
+        max_index = find_last_true_occurrence(lista) 
         
-    kubectl() >> set_jwt() >> get_jwt() >> delete_pvc()
+        return {'name': name, 'type': type, 'max_index': max_index}
+    
+    
+    download_files = TriggerDagRunOperator(
+        task_id="trigger_dagrun",
+        trigger_dag_id="downstream_trigger_dagrun",
+        conf={"sleep_time": 23},
+        wait_for_completion=True,
+        deferrable=True,  # this parameters is available in Airflow 2.6+
+        poke_interval=5,
+    )
+
+
+
+    parameters = get_parameters.expand(link = [get_links()])
+
+    kubectl() >> download_files.expand() >> delete_pvc()
