@@ -10,7 +10,7 @@ from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperato
 from kubernetes.client import models as k8s
 from utils.k8s_pvc_specs import define_k8s_specs 
 
-claim_name = 'my-pvc-2'
+claim_name = 'my-pvc2'
 
 with DAG(dag_id="prepare_download", 
          start_date=datetime(2024, 1, 10),
