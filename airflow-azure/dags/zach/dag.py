@@ -47,8 +47,16 @@ with DAG(dag_id="download_videos",
 
 
     @task(executor_config=define_k8s_specs())
+    def set_jwt():
+        with open('/mnt/mydata/teste.txt', 'w') as f:
+            f.write('Oi')
+    
+    @task(executor_config=define_k8s_specs())
     def get_jwt():
-        return 'asds'
+        with open('/mnt/mydata/teste.txt', 'r') as f:
+            content = f.readlines()
+        
+        print(content)
     
     @task
     def get_links():
@@ -68,4 +76,4 @@ with DAG(dag_id="download_videos",
     added_values = add_one.expand(x=[1, 2, 3])
     sum_it(added_values)
 
-    kubectl() >> get_jwt()
+    kubectl() >> set_jwt() >> get_jwt()
