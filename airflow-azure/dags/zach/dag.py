@@ -8,6 +8,7 @@ from airflow.models.dag import DAG
 from airflow.models.param import Param
 from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperator
 from kubernetes.client import models as k8s
+from utils.k8s_pvc_specs import define_k8s_specs 
 
 
 
@@ -19,13 +20,14 @@ with DAG(dag_id="download_videos",
      },
 ) as dag:
     
-    @task
+    @task(executor_config=define_k8s_specs())
     def kubectl():
         from kubernetes import config, client
         import yaml
         
         config.load_incluster_config()
         v1 = client.CoreV1Api()
+        
         yaml_content = """
         apiVersion: v1
         kind: PersistentVolumeClaim
@@ -38,14 +40,6 @@ with DAG(dag_id="download_videos",
                 requests:
                     storage: 1Gi  # Specify the amount of storage you need
         """
-
-        with open('pvc.yaml', 'r') as file:
-            try:
-                yaml_content = yaml.safe_load(file)
-                return yaml_content
-            except yaml.YAMLError as e:
-                print(f"Error reading YAML file: {e}")
-                return None
 
         resource = yaml.safe_load(yaml_content)
         api_response = v1.create_namespaced_persistent_volume_claim('airflow-azure-workers', 
