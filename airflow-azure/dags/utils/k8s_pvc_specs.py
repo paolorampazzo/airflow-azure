@@ -1,7 +1,7 @@
 from kubernetes.client import models as k8s
 from kubernetes.client import V1LocalObjectReference
 
-def define_k8s_specs():
+def define_k8s_specs(claim_name):
 
   config = {
               "pod_override": k8s.V1Pod(
@@ -9,7 +9,7 @@ def define_k8s_specs():
                       containers=[
                           k8s.V1Container(
                               name="base",
-                              volume_mounts=[k8s.V1VolumeMount(name="my-pvc",
+                              volume_mounts=[k8s.V1VolumeMount(name=claim_name,
                                                                mount_path="/mnt/mydata")],
                             #   resources=k8s.V1ResourceRequirements(
                             #       requests={"memory": memory_request, "cpu": cpu_request},
@@ -17,9 +17,9 @@ def define_k8s_specs():
                             #   )
                           ),
                       ], 
-                      volumes = [k8s.V1Volume(name="my-pvc", 
+                      volumes = [k8s.V1Volume(name=claim_name, 
                                              persistent_volume_claim = k8s.V1PersistentVolumeClaimVolumeSource(
-                        claim_name="my-pvc"
+                        claim_name=claim_name
                     ))]
                       
                   )
