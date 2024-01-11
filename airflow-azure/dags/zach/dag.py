@@ -18,6 +18,14 @@ with DAG(dag_id="download_videos",
          "x": Param('', type="string"),
      },
 ) as dag:
+    
+    @task
+    def read_file_content(file_content):
+    # Read the content of your file
+        file_content = ""
+        with open("pvc.yaml", "r") as file:
+            file_content = file.read()
+        return file_content
 
     create_pvc_task = KubernetesPodOperator(
     task_id='create_pvc_task',
@@ -26,10 +34,10 @@ with DAG(dag_id="download_videos",
     image='paolorampazzodatarisk/dockerkubectl:1.0',
     cmds=['sh', '-c'],
     # arguments=['kubectl apply -f /opt/airflow/dags/repo/airflow-azure/dags/zac/pvc.yaml'],
-    arguments=['sleep infinity'],
+    arguments=[f'echo {file_content};sleep infinity'],
     # arguments=['kubectl apply -f pvc.yaml'],
-    volumes=[k8s.V1Volume(name='dags')],
-    volume_mounts=[k8s.V1VolumeMount(name='dags', mount_path = '/opt/airflow/dags/')],
+    # volumes=[k8s.V1Volume(name='dags')],
+    # volume_mounts=[k8s.V1VolumeMount(name='dags', mount_path = '/opt/airflow/dags/')],
     get_logs=True,
     dag=dag,
 )
@@ -57,4 +65,4 @@ with DAG(dag_id="download_videos",
     added_values = add_one.expand(x=[1, 2, 3])
     sum_it(added_values)
 
-    create_pvc_task
+    read_file_content >> create_pvc_task
