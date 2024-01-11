@@ -16,9 +16,19 @@ with DAG(dag_id="download_videos",
      },
 ) as dag:
 
-    @task
-    def create_pvc():
-        return 1
+    create_pvc_task = KubernetesPodOperator(
+    task_id='create_pvc_task',
+    name='create-pvc',
+    # namespace='your_namespace',
+    image='paolorampazzodatarisk/dockerkubectl:1.0',
+    cmds=['sh', '-c'],
+    arguments=['kubectl apply -f pvc.yaml'],
+    # volumes=[{'name': 'your-volume', 'persistentVolumeClaim': {'claimName': 'your-pvc-name'}}],
+    # volume_mounts=[{'mountPath': '/path/to/your/mount/directory', 'name': 'your-volume'}],
+    get_logs=True,
+    dag=dag,
+)
+
 
     @task
     def get_jwt(jwt: str):
@@ -41,3 +51,5 @@ with DAG(dag_id="download_videos",
 
     added_values = add_one.expand(x=[1, 2, 3])
     sum_it(added_values)
+
+    create_pvc_task
