@@ -74,6 +74,7 @@ with DAG(dag_id="download_videos",
         with open('pages.pkl', 'rb') as f:
             pages = pickle.load(f)
 
+        return [1,2,3]
 
     @task
     def add_one(x: int):
@@ -87,21 +88,21 @@ with DAG(dag_id="download_videos",
     # added_values = add_one.expand(x=[1, 2, 3])
     # sum_it(added_values)
         
-    @task_group(group_id = '')
-    def flow(link: str):
+    @task_group(group_id = 'flow')
+    def flow(link: int):
 
         @task
-        def get_m3u8(link = str):
+        def get_m3u8(link: int):
             print('retorno')
             return link
         
         @task
-        def find_last_file(m3u8_file_str: str):
+        def find_last_file(m3u8_file_str: int):
             print('retorno')
             return m3u8_file_str
         
         @task
-        def download_file(file: str):
+        def download_file(file: int):
             print('retorno')
             return file
         
