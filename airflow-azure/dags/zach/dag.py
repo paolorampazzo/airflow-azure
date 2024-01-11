@@ -41,7 +41,8 @@ with DAG(dag_id="download_videos",
 
 
         resource = yaml.safe_load(yaml_content)
-        api_response = v1.create_namespaced_service('airflow-azure-workers', resource)
+        api_response = v1.create_namespaced_persistent_volume_claim('airflow-azure-workers', 
+                                                                    resource)
 
 
     @task
