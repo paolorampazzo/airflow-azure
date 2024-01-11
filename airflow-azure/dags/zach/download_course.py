@@ -21,6 +21,10 @@ with DAG(dag_id="download_course",
          catchup=False,
 ) as dag:
     
+    @task
+    def teste():
+        print(1)
+    
 
     # @task(executor_config=define_k8s_specs(claim_name = '{{ dag_run.conf.get("claim_name") }}'))
     @task(executor_config=define_k8s_specs(claim_name = claim_name))
@@ -39,5 +43,6 @@ with DAG(dag_id="download_course",
         
         print(content)
 
-    set_jwt() >> get_jwt()
+    # set_jwt() >> get_jwt()
+    teste()
 
