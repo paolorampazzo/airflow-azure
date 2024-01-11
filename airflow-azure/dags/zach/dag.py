@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from datetime import datetime
 
-from airflow.decorators import task
+from airflow.decorators import task, task_group
 from airflow.models.dag import DAG
 from airflow.models.param import Param
 from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperator
@@ -86,5 +86,30 @@ with DAG(dag_id="download_videos",
 
     # added_values = add_one.expand(x=[1, 2, 3])
     # sum_it(added_values)
+        
+    @task_group(group_id = '')
+    def flow(link: str):
 
+        @task
+        def get_m3u8(link = str):
+            print('retorno')
+            return link
+        
+        @task
+        def find_last_file(m3u8_file_str: str):
+            print('retorno')
+            return m3u8_file_str
+        
+        @task
+        def download_file(file: str):
+            print('retorno')
+            return file
+        
+        last_file = find_last_file(get_m3u8(link))
+        download_file.expand(file = range(len(last_file)))
+
+        
+    flow_obj = flow.expand(links = get_links())
+        
+        
     kubectl() >> set_jwt() >> get_jwt() >> delete_pvc()
