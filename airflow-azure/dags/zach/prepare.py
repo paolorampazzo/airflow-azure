@@ -70,7 +70,7 @@ with DAG(dag_id="prepare_download",
     @task
     def get_links():
         import pickle
-        with open('pages.pkl', 'rb') as f:
+        with open('/opt/airflow/dags/repo/airflow-azure/dags/zach/pages.pkl', 'rb') as f:
             pages = pickle.load(f)
 
         return [1,2,3]
