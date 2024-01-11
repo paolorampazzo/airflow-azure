@@ -64,6 +64,7 @@ with DAG(dag_id="download_videos",
         with open('pages.pkl', 'rb') as f:
             pages = pickle.load(f)
 
+
     @task
     def add_one(x: int):
         return x + 1                    
@@ -73,7 +74,7 @@ with DAG(dag_id="download_videos",
         total = sum(values)
         print(f"Total was {total}")
 
-    added_values = add_one.expand(x=[1, 2, 3])
-    sum_it(added_values)
+    # added_values = add_one.expand(x=[1, 2, 3])
+    # sum_it(added_values)
 
     kubectl() >> set_jwt() >> get_jwt()
