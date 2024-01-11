@@ -87,4 +87,4 @@ with DAG(dag_id="download_videos",
     # added_values = add_one.expand(x=[1, 2, 3])
     # sum_it(added_values)
 
-    kubectl().as_setup() >> set_jwt() >> get_jwt() >> delete_pvc().as_teardown()
+    kubectl() >> set_jwt() >> get_jwt() >> delete_pvc()
