@@ -89,7 +89,7 @@ with DAG(dag_id="download_videos",
     # sum_it(added_values)
         
     @task_group(group_id = 'flow')
-    def flow(link: int):
+    def flow(m3u8_link: int):
 
         @task
         def get_m3u8(link: int):
@@ -106,12 +106,12 @@ with DAG(dag_id="download_videos",
             print('retorno')
             return file
         
-        m3u8 = get_m3u8(link)
+        m3u8 = get_m3u8(m3u8_link)
         last_file = find_last_file(m3u8)
         download_file.expand(file = list(range(last_file)))
 
         
-    flow_obj = flow.expand(link = get_links())
+    flow_obj = flow.expand(m3u8_link = get_links())
         
         
     kubectl() >> set_jwt() >> get_jwt() >> delete_pvc()
