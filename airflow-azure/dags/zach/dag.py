@@ -11,6 +11,7 @@ from kubernetes.client import models as k8s
 from utils.k8s_pvc_specs import define_k8s_specs 
 
 
+links_ = [1,2,3]
 
 with DAG(dag_id="download_videos", 
          start_date=datetime(2024, 1, 10),
@@ -111,7 +112,8 @@ with DAG(dag_id="download_videos",
         download_file.expand(file = list(range(last_file)))
 
         
-    flow_obj = flow.partial(m3u8_link = get_links())
+    for link in links_:
+        flow(link)
         
         
     kubectl() >> set_jwt() >> get_jwt() >> delete_pvc()
