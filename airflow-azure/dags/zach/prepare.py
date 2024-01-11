@@ -10,6 +10,7 @@ from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperato
 from kubernetes.client import models as k8s
 from utils.k8s_pvc_specs import define_k8s_specs 
 
+claim_name = 'my-pvc-2'
 
 with DAG(dag_id="prepare_download", 
          start_date=datetime(2024, 1, 10),
@@ -28,11 +29,11 @@ with DAG(dag_id="prepare_download",
         v1 = client.CoreV1Api()
         v1.delete_namespaced_persistent_volume_claim
         
-        yaml_content = """
+        yaml_content = f"""
         apiVersion: v1
         kind: PersistentVolumeClaim
         metadata:
-            name: my-pvc2
+            name: {claim_name}
         spec:
             accessModes:
                 - ReadWriteOnce  # or ReadWriteMany, ReadOnlyMany based on your requirements
@@ -65,7 +66,7 @@ with DAG(dag_id="prepare_download",
         
         config.load_incluster_config()
         v1 = client.CoreV1Api()
-        v1.delete_namespaced_persistent_volume_claim(namespace="airflow-azure-workers", name="my-pvc2")
+        v1.delete_namespaced_persistent_volume_claim(namespace="airflow-azure-workers", name=claim_name)
     
     @task
     def get_links():
