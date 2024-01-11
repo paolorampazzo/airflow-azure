@@ -11,9 +11,7 @@ from kubernetes.client import models as k8s
 from utils.k8s_pvc_specs import define_k8s_specs 
 
 
-links_ = [1,2,3]
-
-with DAG(dag_id="download_videos", 
+with DAG(dag_id="prepare_download", 
          start_date=datetime(2024, 1, 10),
          catchup=False,
          params={
@@ -76,43 +74,25 @@ with DAG(dag_id="download_videos",
             pages = pickle.load(f)
 
         return [1,2,3]
-
+    
     @task
-    def add_one(x: int):
-        return x + 1                    
-
+    def get_m3u8(link: int):
+        print('retorno')
+        return link
+    
     @task
-    def sum_it(values):
-        total = sum(values)
-        print(f"Total was {total}")
+    def find_last_file(m3u8_file_str: int):
+        print('retorno')
+        return m3u8_file_str
+    
+    @task
+    def download_file(file: int):
+        print('retorno')
+        return file
+    
+    m3u8 = get_m3u8.expand(link = get_links())
+    last_file = find_last_file(m3u8)
+    # download_file.expand(file = list(range(last_file)))
 
-    # added_values = add_one.expand(x=[1, 2, 3])
-    # sum_it(added_values)
-        
-    @task_group(group_id = 'flow')
-    def flow(m3u8_link: int):
-
-        @task
-        def get_m3u8(link: int):
-            print('retorno')
-            return link
-        
-        @task
-        def find_last_file(m3u8_file_str: int):
-            print('retorno')
-            return m3u8_file_str
-        
-        @task
-        def download_file(file: int):
-            print('retorno')
-            return file
-        
-        m3u8 = get_m3u8(m3u8_link)
-        last_file = find_last_file(m3u8)
-        download_file.expand(file = list(range(last_file)))
-
-        
-    # flow_obj = flow.partial(m3u8_link = get_links())
-        
         
     kubectl() >> set_jwt() >> get_jwt() >> delete_pvc()
