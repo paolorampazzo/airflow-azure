@@ -34,7 +34,7 @@ with DAG(dag_id="download_videos",
     image='paolorampazzodatarisk/dockerkubectl:1.0',
     cmds=['sh', '-c'],
     # arguments=['kubectl apply -f /opt/airflow/dags/repo/airflow-azure/dags/zac/pvc.yaml'],
-    arguments=[f'echo {file_content};sleep infinity'],
+    arguments=[f'echo {{task_instance.xcom_pull("file_content")}};sleep infinity'],
     # arguments=['kubectl apply -f pvc.yaml'],
     # volumes=[k8s.V1Volume(name='dags')],
     # volume_mounts=[k8s.V1VolumeMount(name='dags', mount_path = '/opt/airflow/dags/')],
@@ -66,4 +66,3 @@ with DAG(dag_id="download_videos",
     sum_it(added_values)
 
     create_pvc_task = read_file_content()
-    
