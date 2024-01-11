@@ -1,7 +1,7 @@
 from kubernetes.client import models as k8s
 from kubernetes.client import V1LocalObjectReference
 
-def define_k8s_specs(claim_name, memory_limit=None, memory_request='300M',
+def define_k8s_specs(claim_name, memory_limit=None, memory_request='300Mi',
                   cpu_request='100m'):
 
   config = {
