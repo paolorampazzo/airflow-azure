@@ -30,13 +30,13 @@ with DAG(dag_id="download_videos",
         apiVersion: v1
         kind: PersistentVolumeClaim
         metadata:
-        name: my-pvc
+            name: my-pvc
         spec:
-        accessModes:
-            - ReadWriteOnce  # or ReadWriteMany, ReadOnlyMany based on your requirements
-        resources:
-            requests:
-            storage: 1Gi  # Specify the amount of storage you need
+            accessModes:
+                - ReadWriteOnce  # or ReadWriteMany, ReadOnlyMany based on your requirements
+            resources:
+                requests:
+                    storage: 1Gi  # Specify the amount of storage you need
         """
 
         resource = yaml.safe_load(yaml_content)
