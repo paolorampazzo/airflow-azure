@@ -120,20 +120,34 @@ with DAG(dag_id="prepare_download",
                 'claim_name': claim_name}
     
 
-    download_files = TriggerDagRunOperator(
-        task_id="download_files_dag",
-        trigger_dag_id="download_course",
-        wait_for_completion=True,
-        # deferrable=True,  # this parameters is available in Airflow 2.6+
-        # poke_interval=5,
-        # conf="{{ ti.xcom_pull(task_ids='upstream_task') }}"
-        conf=parameters
+    @task_group(group_id='group')
+    def send_to_dag(parameters):
+        
+        @task
+        def print_params():
+            print(parameters)
 
-    )
+        @task
+        def download_files():
+            print('oi')
     
+        # download_files = TriggerDagRunOperator(
+        #     task_id="download_files_dag",
+        #     trigger_dag_id="download_course",
+        #     wait_for_completion=True,
+        #     # deferrable=True,  # this parameters is available in Airflow 2.6+
+        #     # poke_interval=5,
+        #     # conf="{{ ti.xcom_pull(task_ids='upstream_task') }}"
+        #     conf=parameters
+
+        # )
+        
+        print_params() >> download_files
+
+
 
     parameters_list = get_parameters.expand(link = get_links())
 
     # kubectl() >> send_to_dag.expand(parameters = parameters_list) >> delete_pvc()
-    download_obj = download_files.expand(parameters = parameters_list)
+    download_obj = send_to_dag.expand(parameters = parameters_list)
     download_obj >> delete_pvc()
