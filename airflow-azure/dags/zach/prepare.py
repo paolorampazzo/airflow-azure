@@ -64,15 +64,18 @@ with DAG(dag_id="prepare_download",
         
         config.load_incluster_config()
         v1 = client.CoreV1Api()
+
+        pvc = v1.read_namespaced_persistent_volume_claim(name=claim_name, 
+                                                         namespace='airflow-azure-workers')
         
-        pvc = client.V1PersistentVolumeClaimSpec()
-        pvc_metadata = client.V1ObjectMeta(name=claim_name)
-        pvc.metadata = pvc_metadata
-        pvc.metadata.finalizers = None
+        
+        patch_payload = [
+                {"op": "remove", "path": "/metadata/finalizers"}
+            ]
 
         v1.delete_namespaced_persistent_volume_claim(namespace="airflow-azure-workers", name=claim_name)
         v1.patch_namespaced_persistent_volume_claim(name=claim_name, namespace="airflow-azure-workers", 
-                                                    body=pvc)
+                                                    body=patch_payload)
     @task
     def get_links():
         import pickle
