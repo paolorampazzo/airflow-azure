@@ -20,7 +20,7 @@ with DAG(dag_id="download_videos",
 ) as dag:
     
     @task
-    def read_file_content(file_content):
+    def read_file_content():
     # Read the content of your file
         file_content = ""
         with open("pvc.yaml", "r") as file:
