@@ -107,7 +107,7 @@ with DAG(dag_id="download_videos",
             return file
         
         last_file = find_last_file(get_m3u8(link))
-        download_file.expand(file = range(len(last_file)))
+        download_file.expand(file = range(last_file))
 
         
     flow_obj = flow.expand(link = get_links())
