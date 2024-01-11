@@ -122,6 +122,10 @@ with DAG(dag_id="prepare_download",
 
     @task_group(group_id='group')
     def send_to_dag(parameters):
+        
+        @task
+        def print_params(parameters):
+            print(parameters)
     
         download_files = TriggerDagRunOperator(
             task_id="download_files_dag",
@@ -134,7 +138,7 @@ with DAG(dag_id="prepare_download",
 
         )
         
-        download_files
+        print_params() >> download_files
 
 
 
