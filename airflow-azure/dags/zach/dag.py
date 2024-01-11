@@ -7,8 +7,8 @@ from airflow.decorators import task
 from airflow.models.dag import DAG
 from airflow.models.param import Param
 from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperator
-from airflow.kubernetes.volume import Volume
-from airflow.kubernetes.volume_mount import VolumeMount
+from kubernetes.client import models as k8s
+
 
 
 with DAG(dag_id="download_videos", 
@@ -27,8 +27,8 @@ with DAG(dag_id="download_videos",
     cmds=['sh', '-c'],
     arguments=['kubectl apply -f /opt/airflow/dags/repo/airflow-azure/dags/zac/pvc.yaml'],
     # arguments=['kubectl apply -f pvc.yaml'],
-    volumes=[Volume(name='dags')],
-    volume_mounts=[VolumeMount('dags', mount_path = '/git')],
+    volumes=[k8s.V1Volume(name='dags')],
+    volume_mounts=[k8s.V1VolumeMount(name='dags', mount_path = '/git')],
     get_logs=True,
     dag=dag,
 )
