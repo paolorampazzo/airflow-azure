@@ -37,3 +37,5 @@ with DAG(dag_id="download_course",
         print(content)
 
     set_jwt() >> get_jwt()
+
+    
