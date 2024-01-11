@@ -17,8 +17,10 @@ def define_k8s_specs():
                             #   )
                           ),
                       ], 
-                      volumes = k8s.V1Volume(name="my-pvc", 
-                                             persistent_volume_claim = "my-pvc")
+                      volumes = [k8s.V1Volume(name="my-pvc", 
+                                             persistent_volume_claim = k8s.V1PersistentVolumeClaimVolumeSource(
+                        claim_name="my-pvc"
+                    ))]
                       
                   )
               )
