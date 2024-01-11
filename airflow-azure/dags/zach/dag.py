@@ -20,7 +20,7 @@ with DAG(dag_id="download_videos",
      },
 ) as dag:
     
-    @task(executor_config=define_k8s_specs())
+    @task
     def kubectl():
         from kubernetes import config, client
         import yaml
@@ -46,9 +46,9 @@ with DAG(dag_id="download_videos",
                                                                     resource)
 
 
-    @task
-    def get_jwt(jwt: str):
-        return jwt
+    @task(executor_config=define_k8s_specs())
+    def get_jwt():
+        return 'asds'
     
     @task
     def get_links():
@@ -68,4 +68,4 @@ with DAG(dag_id="download_videos",
     added_values = add_one.expand(x=[1, 2, 3])
     sum_it(added_values)
 
-    kubectl()
+    kubectl() >> get_jwt()
