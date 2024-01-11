@@ -27,6 +27,7 @@ with DAG(dag_id="download_videos",
         
         config.load_incluster_config()
         v1 = client.CoreV1Api()
+        v1.delete_namespaced_persistent_volume_claim
         
         yaml_content = """
         apiVersion: v1
@@ -57,6 +58,15 @@ with DAG(dag_id="download_videos",
             content = f.readlines()
         
         print(content)
+
+    @task
+    def delete_pvc():
+        from kubernetes import config, client
+        import yaml
+        
+        config.load_incluster_config()
+        v1 = client.CoreV1Api()
+        v1.delete_namespaced_persistent_volume_claim(namespace="airflow-azure-workers", name="my-pvc")
     
     @task
     def get_links():
@@ -77,4 +87,4 @@ with DAG(dag_id="download_videos",
     # added_values = add_one.expand(x=[1, 2, 3])
     # sum_it(added_values)
 
-    kubectl() >> set_jwt() >> get_jwt()
+    kubectl().as_setup() >> set_jwt() >> get_jwt() >> delete_pvc().as_teardown()
