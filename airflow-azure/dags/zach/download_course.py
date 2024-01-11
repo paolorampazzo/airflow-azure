@@ -30,8 +30,8 @@ with DAG(dag_id="download_course",
         dag_run: DagRun = ti.dag_run
         
         with open('/mnt/mydata/teste.txt', 'w') as f:
-            f.write(dag_run.conf)
             print(dag_run.conf)
+            f.write(str(dag_run.conf))
     
     @task(executor_config=define_k8s_specs(claim_name = claim_name))
     def get_jwt():
