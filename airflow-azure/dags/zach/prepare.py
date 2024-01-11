@@ -142,7 +142,7 @@ with DAG(dag_id="prepare_download",
 
         # )
         
-        print_params() >> download_files
+        print_params() >> download_files()
 
 
 
