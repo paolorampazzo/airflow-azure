@@ -6,11 +6,8 @@ from datetime import datetime
 from airflow.decorators import task, task_group
 from airflow.models.dag import DAG
 from airflow.models.param import Param
-from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperator
-from airflow.operators.trigger_dagrun import TriggerDagRunOperator
 from kubernetes.client import models as k8s
 from utils.k8s_pvc_specs import define_k8s_specs 
-from utils.download_utils import lista_gen, find_last_true_occurrence
 from airflow.models.dagrun import DagRun
 from airflow.models.taskinstance import TaskInstance
 
