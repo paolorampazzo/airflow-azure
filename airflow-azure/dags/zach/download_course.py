@@ -20,7 +20,7 @@ with DAG(dag_id="download_course",
 ) as dag:
     
 
-    @task(executor_config=define_k8s_specs('{{ dag_run.conf.get("claim_name") }}'))
+    @task(executor_config=define_k8s_specs(claim_name = '{{ dag_run.conf.get("claim_name") }}'))
     def set_jwt(**kwargs):
         ti: TaskInstance = kwargs["ti"] 
         dag_run: DagRun = ti.dag_run
@@ -29,7 +29,7 @@ with DAG(dag_id="download_course",
             f.write(dag_run.conf)
             print(dag_run.conf)
     
-    @task(executor_config=define_k8s_specs('{{ dag_run.conf.get("claim_name") }}'))
+    @task(executor_config=define_k8s_specs(claim_name = '{{ dag_run.conf.get("claim_name") }}'))
     def get_jwt():
         with open('/mnt/mydata/teste.txt', 'r') as f:
             content = f.readlines()
@@ -38,4 +38,3 @@ with DAG(dag_id="download_course",
 
     set_jwt() >> get_jwt()
 
-    
