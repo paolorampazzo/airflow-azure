@@ -32,7 +32,7 @@ with DAG(dag_id="prepare_download",
         apiVersion: v1
         kind: PersistentVolumeClaim
         metadata:
-            name: my-pvc
+            name: my-pvc2
         spec:
             accessModes:
                 - ReadWriteOnce  # or ReadWriteMany, ReadOnlyMany based on your requirements
@@ -65,7 +65,7 @@ with DAG(dag_id="prepare_download",
         
         config.load_incluster_config()
         v1 = client.CoreV1Api()
-        v1.delete_namespaced_persistent_volume_claim(namespace="airflow-azure-workers", name="my-pvc")
+        v1.delete_namespaced_persistent_volume_claim(namespace="airflow-azure-workers", name="my-pvc2")
     
     @task
     def get_links():
