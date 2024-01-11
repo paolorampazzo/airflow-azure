@@ -145,4 +145,5 @@ with DAG(dag_id="prepare_download",
     parameters_list = get_parameters.expand(link = get_links())
 
     # kubectl() >> send_to_dag.expand(parameters = parameters_list) >> delete_pvc()
-    send_to_dag.expand(parameters = parameters_list) >> delete_pvc()
+    download_obj = send_to_dag.expand(parameters = parameters_list) >> 
+    download_obj >> delete_pvc()
