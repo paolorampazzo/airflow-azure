@@ -65,4 +65,4 @@ with DAG(dag_id="download_videos",
     added_values = add_one.expand(x=[1, 2, 3])
     sum_it(added_values)
 
-    read_file_content >> create_pvc_task
+    create_pvc_task = read_file_content()
