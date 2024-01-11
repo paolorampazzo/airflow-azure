@@ -14,13 +14,16 @@ from utils.download_utils import lista_gen, find_last_true_occurrence
 from airflow.models.dagrun import DagRun
 from airflow.models.taskinstance import TaskInstance
 
+claim_name = 'my-pvc'
+
 with DAG(dag_id="download_course", 
          start_date=datetime(2024, 1, 10),
          catchup=False,
 ) as dag:
     
 
-    @task(executor_config=define_k8s_specs(claim_name = '{{ dag_run.conf.get("claim_name") }}'))
+    # @task(executor_config=define_k8s_specs(claim_name = '{{ dag_run.conf.get("claim_name") }}'))
+    @task(executor_config=define_k8s_specs(claim_name = claim_name))
     def set_jwt(**kwargs):
         ti: TaskInstance = kwargs["ti"] 
         dag_run: DagRun = ti.dag_run
@@ -29,7 +32,7 @@ with DAG(dag_id="download_course",
             f.write(dag_run.conf)
             print(dag_run.conf)
     
-    @task(executor_config=define_k8s_specs(claim_name = '{{ dag_run.conf.get("claim_name") }}'))
+    @task(executor_config=define_k8s_specs(claim_name = claim_name))
     def get_jwt():
         with open('/mnt/mydata/teste.txt', 'r') as f:
             content = f.readlines()
