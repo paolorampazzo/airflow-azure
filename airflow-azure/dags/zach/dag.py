@@ -111,7 +111,7 @@ with DAG(dag_id="download_videos",
         download_file.expand(file = list(range(last_file)))
 
         
-    flow_obj = flow.expand(m3u8_link = get_links())
+    flow_obj = flow.partial(m3u8_link = get_links())
         
         
     kubectl() >> set_jwt() >> get_jwt() >> delete_pvc()
