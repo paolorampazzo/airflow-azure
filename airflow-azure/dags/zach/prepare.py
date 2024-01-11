@@ -47,12 +47,12 @@ with DAG(dag_id="prepare_download",
                                                                     resource)
 
 
-    @task(executor_config=define_k8s_specs())
+    @task(executor_config=define_k8s_specs(claim_name))
     def set_jwt():
         with open('/mnt/mydata/teste.txt', 'w') as f:
             f.write('Oi')
     
-    @task(executor_config=define_k8s_specs())
+    @task(executor_config=define_k8s_specs(claim_name))
     def get_jwt():
         with open('/mnt/mydata/teste.txt', 'r') as f:
             content = f.readlines()
