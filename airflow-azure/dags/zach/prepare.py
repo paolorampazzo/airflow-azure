@@ -96,6 +96,7 @@ with DAG(dag_id="prepare_download",
         dag_run: DagRun = ti.dag_run
         link = kwargs['link']
 
+        print(dag_run)
         print(dag_run.conf)
         version = dag_run.conf['version']
         cookies = dag_run.conf['cookies']
