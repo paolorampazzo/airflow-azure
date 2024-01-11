@@ -39,6 +39,14 @@ with DAG(dag_id="download_videos",
                     storage: 1Gi  # Specify the amount of storage you need
         """
 
+        with open('pvc.yaml', 'r') as file:
+            try:
+                yaml_content = yaml.safe_load(file)
+                return yaml_content
+            except yaml.YAMLError as e:
+                print(f"Error reading YAML file: {e}")
+                return None
+
         resource = yaml.safe_load(yaml_content)
         api_response = v1.create_namespaced_persistent_volume_claim('airflow-azure-workers', 
                                                                     resource)
