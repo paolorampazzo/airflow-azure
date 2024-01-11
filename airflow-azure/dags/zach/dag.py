@@ -29,7 +29,7 @@ with DAG(dag_id="download_videos",
     arguments=['sleep infinity'],
     # arguments=['kubectl apply -f pvc.yaml'],
     volumes=[k8s.V1Volume(name='dags')],
-    volume_mounts=[k8s.V1VolumeMount(name='dags', mount_path = '/opt/airflow/dags')],
+    volume_mounts=[k8s.V1VolumeMount(name='dags', mount_path = '/opt/airflow/dags/')],
     get_logs=True,
     dag=dag,
 )
