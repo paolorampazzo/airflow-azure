@@ -35,7 +35,7 @@ from airflow.operators.python import ExternalPythonOperator, PythonVirtualenvOpe
 from airflow.operators.python import PythonOperator
 from airflow.models.param import Param
 from utils.k8s_specs import define_k8s_specs 
-from airflow.providers.cncf.operators.kubernetes_pod import KubernetesPodOperator
+from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperator
 
 log = logging.getLogger(__name__)
 
