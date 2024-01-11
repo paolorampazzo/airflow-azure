@@ -21,8 +21,29 @@ with DAG(dag_id="download_videos",
     
     @task
     def kubectl():
-        import subprocess
-        subprocess.run(["kubectl", "apply", "-f", "pvc.yaml"])
+        from kubernetes import config, client
+        import yaml
+        
+        config.load_incluster_config()
+        v1 = client.CoreV1Api()
+        yaml_content = """
+        apiVersion: v1
+        kind: Service
+        metadata:
+        name: example-service
+        spec:
+        selector:
+            app: example
+        ports:
+            - protocol: TCP
+            port: 80
+            targetPort: 8080
+        """
+
+
+        resource = yaml.safe_load(yaml_content)
+        api_response = v1.create_namespaced_service('airflow-azure-workers', resource)
+
 
     @task
     def get_jwt(jwt: str):
