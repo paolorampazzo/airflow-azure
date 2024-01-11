@@ -20,7 +20,6 @@ with DAG(dag_id="prepare_download",
          start_date=datetime(2024, 1, 10),
          catchup=False,
          params={
-         "x": Param('', type="string"),
          "version": Param('v3', enum=["v1", "v2", "v3"]),
          "cookies": Param('', type='string')
      },
@@ -97,6 +96,7 @@ with DAG(dag_id="prepare_download",
         dag_run: DagRun = ti.dag_run
         link = kwargs['link']
 
+        print(dag_run.conf)
         version = dag_run.conf['version']
         cookies = dag_run.conf['cookies']
         name = link[link.rfind("/")+1:]
