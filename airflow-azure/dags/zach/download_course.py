@@ -81,5 +81,5 @@ with DAG(dag_id="download_course",
         print(content)
 
     metadata = get_metadata()
-    metadata_list = [{**x, **{'index': k}} for k in range(metadata['max_index']+1)]
+    metadata_list = [{**metadata, **{'index': k}} for k in range(metadata['max_index']+1)]
     download_file.partial().expand(metadata = metadata_list)
