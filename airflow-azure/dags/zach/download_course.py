@@ -30,7 +30,7 @@ with DAG(dag_id="download_course",
     @task(executor_config=define_k8s_specs(claim_name = claim_name,
                                            node_selector={'key': 'kubernetes.azure.com/agentpool',
                                                           'values': ['basic10']}))
-    def download_file(name, type, i, version):
+    def download_file(metadata):
         from requests import get
         from requests.exceptions import ConnectTimeout
         from os import makedirs
@@ -83,7 +83,4 @@ with DAG(dag_id="download_course",
     # metadata_list = [{**metadata, **{'index': k}} for k in range(metadata['max_index']+1)]
 
 
-    download_file.partial().expand(name = [metadata['name']],
-        type = [metadata['type']],
-        i = range(metadata['max_index']),
-        version = [metadata['version']])
+    download_file.partial().expand(metadata = metadata)
