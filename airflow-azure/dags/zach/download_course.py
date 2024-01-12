@@ -28,7 +28,7 @@ with DAG(dag_id="download_course",
         return dag_run.conf
     
 
-    @task(executor_config=define_k8s_specs(claim_name = claim_name, ))
+    @task(executor_config=define_k8s_specs(claim_name = claim_name))
     def download_file(metadata):
         from requests import get
         from requests.exceptions import ConnectTimeout
@@ -36,7 +36,7 @@ with DAG(dag_id="download_course",
         
         name = metadata['name'], 
         type = metadata['type'], 
-        index = metadata['index']
+        i = metadata['index']
         version = metadata['version']
 
         folder_path = f'/mnt/mydata/{name}'
@@ -44,9 +44,9 @@ with DAG(dag_id="download_course",
         prefix = f'https://dataengineer.io/api/v1/content/video/{version}/'
         type = ('lecture' in name and 'lecture') or ('lab' in name and 'lab') or ('recording')
         # name = raw_url[raw_url.rfind('/v3/')+4:raw_url.rfind('/')]
-        name
-        lista_urls = [prefix + f'{name}/{type}{i}.ts' for i in range(0, 2000)]
-        lista = [lista_gen(x) for x in lista_urls]
+
+        # lista_urls = [prefix + f'{name}/{type}{i}.ts' for i in range(0, 2000)]
+        # lista = [lista_gen(x) for x in lista_urls]
 
         try:
             makedirs(folder_path)
@@ -54,7 +54,7 @@ with DAG(dag_id="download_course",
             pass
 
 
-        i, url = index, lista_urls[index]
+        url = prefix + f'{name}/{type}{i}.ts'
 
         file_name = f"{type}{i}.ts"
         file_path = f"{folder_path}/{file_name}"
@@ -69,7 +69,9 @@ with DAG(dag_id="download_course",
             with open(file_path, "wb") as file:
                 file.write(response.content)
 
-    @task(executor_config=define_k8s_specs(claim_name = claim_name))
+    @task(executor_config=define_k8s_specs(claim_name = claim_name,
+                                           node_selector={'key': 'kubernetes.azure.com/agentpool',
+                                                          'values': ['basic10']}))
     def get_jwt():
         with open('/mnt/mydata/teste.txt', 'r') as f:
             content = f.readlines()
