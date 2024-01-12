@@ -10,11 +10,10 @@ from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperato
 from airflow.operators.trigger_dagrun import TriggerDagRunOperator
 from kubernetes.client import models as k8s
 from utils.k8s_pvc_specs import define_k8s_specs 
-from utils.download_utils import lista_gen, find_last_true_occurrence
+from utils.download_utils import lista_gen, find_last_true_occurrence, claim_name
 from airflow.models.dagrun import DagRun
 from airflow.models.taskinstance import TaskInstance
 
-claim_name = 'my-pvc'
 
 with DAG(dag_id="prepare_download", 
          start_date=datetime(2024, 1, 10),
@@ -116,8 +115,7 @@ with DAG(dag_id="prepare_download",
         lista = [lista_gen(x) for x in lista_urls]       
         max_index = find_last_true_occurrence(lista) 
         
-        return {'name': name, 'type': type, 'max_index': max_index, 
-                'claim_name': claim_name}
+        return {'name': name, 'type': type, 'max_index': max_index}
     
 
     

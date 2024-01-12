@@ -7,7 +7,8 @@ from airflow.decorators import task, task_group
 from airflow.models.dag import DAG
 from airflow.models.param import Param
 from kubernetes.client import models as k8s
-from utils.k8s_pvc_specs import define_k8s_specs 
+from utils.k8s_pvc_specs import define_k8s_specs
+from utils.download_utils import claim_name
 from airflow.models.dagrun import DagRun
 from airflow.models.taskinstance import TaskInstance
 
@@ -23,8 +24,7 @@ with DAG(dag_id="download_course",
         print(1)
     
 
-    @task(executor_config=define_k8s_specs(claim_name = '{{ dag_run.conf.get("claim_name") }}'))
-    # @task(executor_config=define_k8s_specs(claim_name = claim_name))
+    @task(executor_config=define_k8s_specs(claim_name = claim_name))
     def set_jwt(**kwargs):
         ti: TaskInstance = kwargs["ti"] 
         dag_run: DagRun = ti.dag_run

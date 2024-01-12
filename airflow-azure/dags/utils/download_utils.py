@@ -1,5 +1,7 @@
 import requests
 
+claim_name = 'my-pvc'
+
 def find_last_true_occurrence(bool_list):
     n = len(bool_list)
     low = 0
