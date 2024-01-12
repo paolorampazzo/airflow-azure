@@ -19,7 +19,7 @@ with DAG(dag_id="download_course",
 ) as dag:
     
     @task
-    def get_metadata(**kwargs):
+    def get_metadata(**kwargs) -> Dict:
         ti: TaskInstance = kwargs["ti"] 
         dag_run: DagRun = ti.dag_run
         
