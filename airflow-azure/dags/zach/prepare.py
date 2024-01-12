@@ -64,7 +64,7 @@ with DAG(dag_id="prepare_download",
         
         print(content)
 
-    @task(trigger_rule=TriggerRule.ALWAYS)
+    @task(trigger_rule=TriggerRule.DUMMY)
     def delete_pvc():
         from kubernetes import config, client
         
