@@ -14,6 +14,7 @@ from utils.download_utils import lista_gen, find_last_true_occurrence, claim_nam
 from airflow.models.dagrun import DagRun
 from airflow.models.taskinstance import TaskInstance
 from airflow.utils.trigger_rule import TriggerRule
+import json
 
 
 
@@ -120,5 +121,5 @@ with DAG(dag_id="prepare_download",
     
     parameters_list = get_parameters.expand(link = get_links())
 
-    download_obj = download_files.expand(conf = parameters_list)
+    download_obj = download_files.expand(conf = json.load(parameters_list))
     kubectl() >> download_obj >> delete_pvc()
