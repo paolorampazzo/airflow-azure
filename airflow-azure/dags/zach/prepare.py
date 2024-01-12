@@ -108,8 +108,6 @@ with DAG(dag_id="prepare_download",
         return {'name': name, 'type': type, 'max_index': max_index,
                 'version': version}
     
-
-    
     download_files = TriggerDagRunOperator.partial(
         task_id="download_files_dag",
         trigger_dag_id="download_course",
