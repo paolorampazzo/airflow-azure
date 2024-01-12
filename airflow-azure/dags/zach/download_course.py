@@ -59,6 +59,8 @@ with DAG(dag_id="download_course",
         file_name = f"{type}{i}.ts"
         file_path = f"{folder_path}/{file_name}"
 
+        print('Downloading', file_name, 'to', file_path)
+
         try:
             response = get(url, timeout=3)
         except Exception as e:
