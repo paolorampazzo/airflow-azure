@@ -95,8 +95,8 @@ with DAG(dag_id="prepare_download",
 
         print(dag_run)
         print(dag_run.conf)
-        version = dag_run.conf['version'] | 'v3'
-        cookies = dag_run.conf['cookies'] | ''
+        version = dag_run.conf.get('version', 'v3')
+        cookies = dag_run.conf.get('cookies', '')
         name = link[link.rfind("/")+1:]
 
         prefix = f'https://dataengineer.io/api/v1/content/video/{version}/'
