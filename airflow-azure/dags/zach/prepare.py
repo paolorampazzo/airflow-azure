@@ -105,7 +105,7 @@ with DAG(dag_id="prepare_download",
         lista = [lista_gen(x) for x in lista_urls]       
         max_index = find_last_true_occurrence(lista) 
         
-        return [{'name': name, 'type': type, 'max_index': range(max_index+1),
+        return [{'name': name, 'type': type, 'i': list(range(max_index+1)),
                 'version': version}]
     
     download_files = TriggerDagRunOperator.partial(
