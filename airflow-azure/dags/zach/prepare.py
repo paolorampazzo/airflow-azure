@@ -89,6 +89,8 @@ with DAG(dag_id="prepare_download",
     @task
     def get_parameters(**kwargs):
         import requests
+        import json
+        
         ti: TaskInstance = kwargs["ti"] 
         dag_run: DagRun = ti.dag_run
         link = kwargs['link']
@@ -105,8 +107,8 @@ with DAG(dag_id="prepare_download",
         lista = [lista_gen(x) for x in lista_urls]       
         max_index = find_last_true_occurrence(lista) 
         
-        return [{'name': name, 'type': type, 'i': list(range(max_index+1)),
-                'version': version}]
+        return json.dumps([{'name': name, 'type': type, 'i': list(range(max_index+1)),
+                'version': version}])
     
     download_files = TriggerDagRunOperator.partial(
         task_id="download_files_dag",
