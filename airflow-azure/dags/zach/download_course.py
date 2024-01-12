@@ -85,5 +85,5 @@ with DAG(dag_id="download_course",
 
     download_file.partial().expand(name = [metadata['name']],
         type = [metadata['type']],
-        i = range(metadata['max_index']+1),
+        i = range(metadata['max_index']),
         version = [metadata['version']])
