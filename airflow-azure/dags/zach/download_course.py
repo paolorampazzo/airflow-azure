@@ -82,4 +82,4 @@ with DAG(dag_id="download_course",
 
     metadata = get_metadata()
     download_file.partial().expand(metadata = \
-    metadata.map(lambda x: {**x, **{'index': k for k in range(x['max_index']+1)}}))
+    metadata.map(lambda x: [{**x, **{'index': k}} for k in range(x['max_index']+1)]))
