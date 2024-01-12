@@ -84,4 +84,4 @@ with DAG(dag_id="download_course",
     # metadata_list = [{**metadata, **{'index': k}} for k in range(metadata['max_index']+1)]
 
 
-    download_file.partial().expand(metadata = json.load(metadata))
+    download_file.partial().expand(metadata = metadata)
