@@ -71,10 +71,6 @@ with DAG(dag_id="prepare_download",
         config.load_incluster_config()
         v1 = client.CoreV1Api()
 
-        # pvc = v1.read_namespaced_persistent_volume_claim(name=claim_name, 
-        #                                                  namespace='airflow-azure-workers')
-        
-        
         patch_payload = [
                 {"op": "remove", "path": "/metadata/finalizers"}
             ]
@@ -102,14 +98,6 @@ with DAG(dag_id="prepare_download",
         version = dag_run.conf['version']
         cookies = dag_run.conf['cookies']
         name = link[link.rfind("/")+1:]
-        # m3u8_page = f'https://dataengineer.io/api/v1/content/video/{version}/{name}/playlist.m3u8'
-        # r = requests.get(m3u8_page, cookies={k['name']: k['value'] for k in cookies})
-        # r = requests.get(m3u8_page, cookies={'jwt': cookies})
-
-        # try:
-        #     assert r.status_code == 200
-        # except Exception as e:
-        #     print('Erro', e)
 
         prefix = f'https://dataengineer.io/api/v1/content/video/{version}/'
         type = ('lecture' in name and 'lecture') or ('lab' in name and 'lab') or ('recording')
@@ -117,7 +105,8 @@ with DAG(dag_id="prepare_download",
         lista = [lista_gen(x) for x in lista_urls]       
         max_index = find_last_true_occurrence(lista) 
         
-        return {'name': name, 'type': type, 'max_index': max_index}
+        return {'name': name, 'type': type, 'max_index': max_index,
+                'version': version}
     
 
     
@@ -125,19 +114,10 @@ with DAG(dag_id="prepare_download",
         task_id="download_files_dag",
         trigger_dag_id="download_course",
         wait_for_completion=True,
-        # deferrable=True,  # this parameters is available in Airflow 2.6+
-        # poke_interval=5,
-        # conf="{{ ti.xcom_pull(task_ids='upstream_task') }}"
-        # conf=parameters
-
     )
     
     
-
-
-
     parameters_list = get_parameters.expand(link = get_links())
 
-    # kubectl() >> send_to_dag.expand(parameters = parameters_list) >> delete_pvc()
     download_obj = download_files.expand(conf = parameters_list)
     kubectl() >> download_obj >> delete_pvc()

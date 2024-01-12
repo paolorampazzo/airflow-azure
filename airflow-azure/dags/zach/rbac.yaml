@@ -1,0 +1,41 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: airflow-pvc
+rules:
+- apiGroups: [""]
+  resources: ["persistentvolumeclaims"]
+  verbs: ["create", "get", "list", "delete",]
+- apiGroups: [""]
+  resources: ["pods", "pods/log"]
+  verbs: ["create", "get", "list", "delete", "patch"]
+
+
+
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: airflow-pvc-binding
+subjects:
+- kind: ServiceAccount
+  name: airflow-azure-scheduler
+  namespace: airflow-azure
+roleRef:
+  kind: ClusterRole
+  name: airflow-pvc
+  apiGroup: rbac.authorization.k8s.io
+
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: airflow-pvc-binding
+subjects:
+- kind: ServiceAccount
+  name: airflow-azure-worker
+  namespace: airflow-azure-workers
+roleRef:
+  kind: ClusterRole
+  name: airflow-pvc
+  apiGroup: rbac.authorization.k8s.io
