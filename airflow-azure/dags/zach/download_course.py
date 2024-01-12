@@ -27,17 +27,15 @@ with DAG(dag_id="download_course",
     
 
     @task(executor_config=define_k8s_specs(claim_name = claim_name))
-    def download_file(**kwargs):
+    def download_file(metadata):
         from requests import get
         from requests.exceptions import ConnectTimeout
         from os import makedirs
-        ti: TaskInstance = kwargs["ti"] 
-        dag_run: DagRun = ti.dag_run
         
-        name = dag_run.conf['name'], 
-        type = dag_run.conf['type'], 
-        index = dag_run.conf['index']
-        version = dag_run.conf['version']
+        name = metadata['name'], 
+        type = metadata['type'], 
+        index = metadata['index']
+        version = metadata['version']
 
         folder_path = f'/mnt/mydata/{name}'
         
