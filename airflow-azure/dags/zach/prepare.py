@@ -13,6 +13,8 @@ from utils.k8s_pvc_specs import define_k8s_specs
 from utils.download_utils import lista_gen, find_last_true_occurrence, claim_name
 from airflow.models.dagrun import DagRun
 from airflow.models.taskinstance import TaskInstance
+from airflow.utils.trigger_rule import TriggerRule
+
 
 
 with DAG(dag_id="prepare_download", 
@@ -62,7 +64,7 @@ with DAG(dag_id="prepare_download",
         
         print(content)
 
-    @task
+    @task(trigger_rule=TriggerRule.ALWAYS)
     def delete_pvc():
         from kubernetes import config, client
         
