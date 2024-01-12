@@ -123,3 +123,4 @@ with DAG(dag_id="prepare_download",
 
     download_obj = download_files.expand(conf = json.load(parameters_list))
     kubectl() >> download_obj >> delete_pvc()
+    
