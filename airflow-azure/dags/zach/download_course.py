@@ -11,6 +11,7 @@ from utils.k8s_pvc_specs import define_k8s_specs
 from utils.download_utils import claim_name, lista_gen
 from airflow.models.dagrun import DagRun
 from airflow.models.taskinstance import TaskInstance
+import json
 
 
 with DAG(dag_id="download_course", 
@@ -79,7 +80,7 @@ with DAG(dag_id="download_course",
         
         print(content)
 
-    metadata = get_metadata()
+    metadata = json.load(get_metadata())
     # metadata_list = [{**metadata, **{'index': k}} for k in range(metadata['max_index']+1)]
 
 
