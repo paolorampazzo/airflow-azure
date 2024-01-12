@@ -12,7 +12,6 @@ from utils.download_utils import claim_name
 from airflow.models.dagrun import DagRun
 from airflow.models.taskinstance import TaskInstance
 
-claim_name = 'my-pvc'
 
 with DAG(dag_id="download_course", 
          start_date=datetime(2024, 1, 10),
