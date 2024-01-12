@@ -28,7 +28,7 @@ with DAG(dag_id="download_course",
         return dag_run.conf
     
 
-    @task(executor_config=define_k8s_specs(claim_name = claim_name))
+    @task(executor_config=define_k8s_specs(claim_name = claim_name, ))
     def download_file(metadata):
         from requests import get
         from requests.exceptions import ConnectTimeout
@@ -54,7 +54,7 @@ with DAG(dag_id="download_course",
             pass
 
 
-        i, url = index, lista_urls[max_index]
+        i, url = index, lista_urls[index]
 
         file_name = f"{type}{i}.ts"
         file_path = f"{folder_path}/{file_name}"
@@ -69,10 +69,6 @@ with DAG(dag_id="download_course",
             with open(file_path, "wb") as file:
                 file.write(response.content)
 
-        # with open('/mnt/mydata/teste.txt', 'w') as f:
-        #     print(dag_run.conf)
-        #     f.write(str(dag_run.conf))
-    
     @task(executor_config=define_k8s_specs(claim_name = claim_name))
     def get_jwt():
         with open('/mnt/mydata/teste.txt', 'r') as f:
@@ -82,4 +78,4 @@ with DAG(dag_id="download_course",
 
     metadata = get_metadata()
     download_file.partial().expand(metadata = \
-    metadata.map(lambda x: {**x, **{'index': k for k in range(x['max_index'])}}))
+    metadata.map(lambda x: {**x, **{'index': k for k in range(x['max_index']+1)}}))
