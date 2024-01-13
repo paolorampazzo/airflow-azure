@@ -101,6 +101,7 @@ with DAG(dag_id="download_course",
         version = metadata['version']
 
 
+        subprocess.run(["apt-get", "install", "sudo"])
         subprocess.run(["sudo", "apt-get", "install", "ffmpeg"])
         
 
