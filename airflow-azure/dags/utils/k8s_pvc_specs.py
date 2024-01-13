@@ -42,6 +42,7 @@ def define_k8s_specs(claim_name = '', memory_limit=None, memory_request='300Mi',
 
 
 
+
     if len(node_selector):
         key = node_selector['key']
         values = node_selector['values']
