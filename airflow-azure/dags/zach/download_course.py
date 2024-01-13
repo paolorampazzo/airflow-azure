@@ -29,13 +29,11 @@ with DAG(dag_id="download_course",
         metadata = dag_run.conf
 
         max_index = metadata['max_index']
-        max_index = 5
-        indexes = [index for index in range(max_index) if max_index > 0]
 
         return [{'name': metadata['name'], 
                  'type': metadata['type'], 
                 'i': x,
-                'version': metadata['version']} for x in indexes]
+                'version': metadata['version']} for x in range(max_index + 1)] if max_index > 0 else []
     
     @task(executor_config=define_k8s_specs(claim_name = claim_name,
                                            node_selector=[{'key': 'kubernetes.azure.com/agentpool',

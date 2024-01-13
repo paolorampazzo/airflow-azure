@@ -107,6 +107,7 @@ with DAG(dag_id="prepare_download",
         lista = [lista_gen(x) for x in lista_urls]       
         max_index = find_last_true_occurrence(lista) 
         
+        max_index = 5
         return {'name': name, 'type': type, 'max_index': max_index,
                 'version': version}
     
