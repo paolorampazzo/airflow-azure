@@ -74,9 +74,9 @@ with DAG(dag_id="download_course",
             if type(e) == ConnectTimeout:
                 raise Exception('timeout em' + str(url))
 
-            # Save the file
-            with open(file_path, "wb") as file:
-                file.write(response.content)
+        # Save the file
+        with open(file_path, "wb") as file:
+            file.write(response.content)
 
     @task(executor_config=define_k8s_specs(claim_name = claim_name))
     def get_jwt():
