@@ -36,7 +36,7 @@ def define_k8s_specs(claim_name = '', memory_limit=None, memory_request='300Mi',
                                                                mount_path="/mnt/mydata")],
         
         config['pod_override'].spec.volumes = volumes
-        config['pod_override'].spec.cotainers[0].volume_mounts = volume_mounts
+        config['pod_override'].spec.containers[0].volume_mounts = volume_mounts
 
 
     if len(node_selector):
