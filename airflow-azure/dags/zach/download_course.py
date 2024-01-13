@@ -38,8 +38,8 @@ with DAG(dag_id="download_course",
                 'version': metadata['version']} for x in range(5)]
     
     @task(executor_config=define_k8s_specs(claim_name = claim_name,
-                                           node_selector={'key': 'kubernetes.azure.com/agentpool',
-                                                          'values': ['basic10']}))
+                                           node_selector=[{'key': 'kubernetes.azure.com/agentpool',
+                                                          'values': ['basic10']}]))
     def download_file(metadata):
         from requests import get
         from requests.exceptions import ConnectTimeout
