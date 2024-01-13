@@ -10,8 +10,8 @@ def define_k8s_specs(claim_name = '', memory_limit=None, memory_request='300Mi',
                       containers=[
                           k8s.V1Container(
                               name="base",
-                              volume_mounts=[k8s.V1VolumeMount(name=claim_name,
-                                                               mount_path="/mnt/mydata")],
+                            #   volume_mounts=[k8s.V1VolumeMount(name=claim_name,
+                            #                                    mount_path="/mnt/mydata")],
                               resources=k8s.V1ResourceRequirements(requests={"memory": memory_request, "cpu": cpu_request},
                                 #   limits={"memory": memory_limit}
                               ),
@@ -32,7 +32,11 @@ def define_k8s_specs(claim_name = '', memory_limit=None, memory_request='300Mi',
                         claim_name=claim_name
                     ))]
         
+        volume_mounts=[k8s.V1VolumeMount(name=claim_name,
+                                                               mount_path="/mnt/mydata")],
+        
         config['pod_override'].spec.volumes = volumes
+        config['pod_override'].spec.cotainers[0].volume_mounts = volume_mounts
 
 
     if len(node_selector):
@@ -46,6 +50,7 @@ def define_k8s_specs(claim_name = '', memory_limit=None, memory_request='300Mi',
                                                                         operator='In',
                                                                         values= values)
                                         ])])    
+        
         
         config['pod_override'].spec.affinity = affinity 
     return config
