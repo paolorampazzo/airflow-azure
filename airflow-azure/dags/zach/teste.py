@@ -26,10 +26,15 @@ with DAG(dag_id="teste",
      },
 ) as dag:
     
+    @task(executor_config=define_k8s_specs(node_selector={'key': 'kubernetes.azure.com/agentpool',
+                                                          'values': ['basic10']}))
+    def teste1():
+        print(1)
+    
     @task(executor_config=define_k8s_specs(claim_name = claim_name,
                                            node_selector={'key': 'kubernetes.azure.com/agentpool',
                                                           'values': ['basic10']}))
-    def teste():
+    def teste2():
         print(1)
 
-    teste()
+    teste1() >> teste2()
