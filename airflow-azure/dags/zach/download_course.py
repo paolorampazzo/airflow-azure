@@ -163,7 +163,7 @@ with DAG(dag_id="download_course",
     merge_files_obj = merge_files()
     downloads >> merge_files_obj
     
-    send_to_google(merge_files_obj)
+    send_to_google(*merge_files_obj)
 
 
 
