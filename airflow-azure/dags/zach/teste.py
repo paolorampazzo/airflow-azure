@@ -32,19 +32,11 @@ with DAG(dag_id="teste",
                                                           {'key': 'meusystem',
                                                           'operator': 'In', 'values': ['true']}]))
     def teste1():
-        from os import makedirs
-        from os.path import join
+        from utils.google_api import list_folder
 
-    
-        json_data = Variable.get('google_json_password')
-        credentials_path = '/mnt/mydata/credentials'
-        try:
-            makedirs(credentials_path)
-        except:
-            pass
+        print(list_folder())
+
         
-        with open(join(credentials_path, 'credentials.json'), 'r') as f:
-            f.write(json_data)
     
     # @task(executor_config=define_k8s_specs(node_selector=[{'key': 'kubernetes.azure.com/agentpool',
     #                                                       'operator': 'In', 'values': ['basic10']},

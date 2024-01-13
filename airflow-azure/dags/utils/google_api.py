@@ -3,10 +3,26 @@ from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
 
+from airflow.models import Variable
+
+from os import makedirs
+from os.path import join
+
+json_data = Variable.get('google_json_password')
+credentials_path = '/mnt/mydata/credentials'
+credentials_filename = join(credentials_path, 'credentials.json')
+try:
+    makedirs(credentials_path)
+except:
+    pass
+
+with open(credentials_filename, 'r') as f:
+    f.write(json_data)
 
 # Define the Google Drive API scopes and service account file path
 SCOPES = ['https://www.googleapis.com/auth/drive']
-SERVICE_ACCOUNT_FILE = "/file/path/of/json/file.json"
+# SERVICE_ACCOUNT_FILE = "/file/path/of/json/file.json"
+SERVICE_ACCOUNT_FILE = credentials_filename
 
 # Create credentials using the service account file
 credentials = service_account.Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=SCOPES)
