@@ -8,30 +8,36 @@ from airflow.models import Variable
 from os import makedirs
 from os.path import join
 
-json_data = Variable.get('google_json_password')
-credentials_path = '/mnt/mydata/credentials'
-credentials_filename = join(credentials_path, 'credentials.json')
-try:
-    makedirs(credentials_path)
-except:
-    pass
+def generate_credentials():
+  json_data = Variable.get('google_json_password')
+  credentials_path = '/mnt/mydata/credentials'
+  credentials_filename = join(credentials_path, 'credentials.json')
+  try:
+      makedirs(credentials_path)
+  except:
+      pass
 
-with open(credentials_filename, 'w') as f:
-    f.write(json_data)
+  with open(credentials_filename, 'w') as f:
+      f.write(json_data)
 
-# Define the Google Drive API scopes and service account file path
-SCOPES = ['https://www.googleapis.com/auth/drive']
-# SERVICE_ACCOUNT_FILE = "/file/path/of/json/file.json"
-SERVICE_ACCOUNT_FILE = credentials_filename
+  # Define the Google Drive API scopes and service account file path
+  SCOPES = ['https://www.googleapis.com/auth/drive']
+  # SERVICE_ACCOUNT_FILE = "/file/path/of/json/file.json"
+  SERVICE_ACCOUNT_FILE = credentials_filename
 
-# Create credentials using the service account file
-credentials = service_account.Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=SCOPES)
+  # Create credentials using the service account file
+  credentials = service_account.Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=SCOPES)
 
-# Build the Google Drive service
-drive_service = build('drive', 'v3', credentials=credentials)
+  # Build the Google Drive service
+  drive_service = build('drive', 'v3', credentials=credentials)
+
+  return drive_service
 
 def create_folder(folder_name, parent_folder_id=None):
     """Create a folder in Google Drive and return its ID."""
+
+    drive_service = generate_credentials()
+
     folder_metadata = {
         'name': folder_name,
         "mimeType": "application/vnd.google-apps.folder",
@@ -48,6 +54,8 @@ def create_folder(folder_name, parent_folder_id=None):
 
 def list_folder(parent_folder_id=None, delete=False):
     """List folders and files in Google Drive."""
+    drive_service = generate_credentials()
+
     results = drive_service.files().list(
         q=f"'{parent_folder_id}' in parents and trashed=false" if parent_folder_id else None,
         pageSize=1000,
@@ -68,6 +76,9 @@ def list_folder(parent_folder_id=None, delete=False):
 
 def delete_files(file_or_folder_id):
     """Delete a file or folder in Google Drive by ID."""
+
+    drive_service = generate_credentials()
+
     try:
         drive_service.files().delete(fileId=file_or_folder_id).execute()
         print(f"Successfully deleted file/folder with ID: {file_or_folder_id}")
@@ -77,6 +88,9 @@ def delete_files(file_or_folder_id):
 
 def download_file(file_id, destination_path):
     """Download a file from Google Drive by its ID."""
+
+    drive_service = generate_credentials()
+
     request = drive_service.files().get_media(fileId=file_id)
     fh = io.FileIO(destination_path, mode='wb')
     
@@ -91,6 +105,9 @@ import os
 
 def create_folder_with_file(folder_name, file_path, credentials_path, parent_folder_id=None):
     """Create a folder in Google Drive and upload a local file to it."""
+
+    drive_service = generate_credentials()
+    
     # Step 1: Create the folder
     folder_metadata = {
         'name': folder_name,
