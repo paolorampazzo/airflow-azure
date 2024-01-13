@@ -49,7 +49,7 @@ with DAG(dag_id="download_course",
         
         name = metadata['name']
         type = metadata['type']
-        i = metadata['index'] 
+        i = metadata['i'] 
         version = metadata['version']
  
  
