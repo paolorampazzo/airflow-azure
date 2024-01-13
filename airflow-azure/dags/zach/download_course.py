@@ -45,7 +45,7 @@ with DAG(dag_id="download_course",
         
         name = metadata['name'] 
 
-        type = metadata['type']
+        type_ = metadata['type']
         i = metadata['i'] 
         version = metadata['version']
  
@@ -53,7 +53,6 @@ with DAG(dag_id="download_course",
         folder_path = f'/mnt/mydata/{version}/{name}'
         
         prefix = f'https://dataengineer.io/api/v1/content/video/{version}/'
-        type = ('lecture' in name and 'lecture') or ('lab' in name and 'lab') or ('recording')
 
         try:
             makedirs(folder_path)
@@ -61,15 +60,15 @@ with DAG(dag_id="download_course",
             pass
 
 
-        url = prefix + f'{name}/{type}{i}.ts'
+        url = prefix + f'{name}/{type_}{i}.ts'
 
-        file_name = f"{type}{i}.ts"
+        file_name = f"{type_}{i}.ts"
         file_path = f"{folder_path}/{file_name}"
 
         print('Downloading', file_name, 'to', file_path)
 
         try:
-            response = get(url, timeout=3)
+            response = get(url, timeout=5)
         except Exception as e:
             if type(e) == ConnectTimeout:
                 raise Exception('timeout em' + str(url))
@@ -101,7 +100,7 @@ with DAG(dag_id="download_course",
         version = metadata['version']
 
 
-        subprocess.run(["apt-get", "install", "ffmpeg"])
+        subprocess.run(["sudo", "apt-get", "install", "ffmpeg"])
         
 
         files_folder_path = f'/mnt/mydata/{version}/{name}'
@@ -126,7 +125,7 @@ with DAG(dag_id="download_course",
         except:
             pass
 
-        subprocess.run(['ffmpeg', '-i', infile, outfile])            
+        subprocess.run(['sudo', 'ffmpeg', '-i', infile, outfile])            
     
 
 
