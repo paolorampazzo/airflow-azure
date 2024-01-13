@@ -35,12 +35,13 @@ with DAG(dag_id="download_course",
         return [{'name': metadata['name'], 
                  'type': metadata['type'], 
                 'i': x,
-                'version': metadata['version']} for x in range(5)]
+                'version': metadata['version']} for x in range(100)]
     
     @task(executor_config=define_k8s_specs(claim_name = claim_name,
                                            node_selector=[{'key': 'kubernetes.azure.com/agentpool',
-                                                          'operator': 'In',
-                                                          'values': ['basic10']}]))
+                                                          'operator': 'In', 'values': ['basic10']},
+                                                          {'key': 'meussytem',
+                                                          'operator': 'NotIn', 'values': ['true']}]))
     def download_file(metadata):
         from requests import get
         from requests.exceptions import ConnectTimeout
