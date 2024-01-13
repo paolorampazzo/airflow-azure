@@ -2,7 +2,7 @@ from kubernetes.client import models as k8s
 from kubernetes.client import V1LocalObjectReference
 
 def define_k8s_specs(claim_name = '', memory_limit=None, memory_request='300Mi',
-                  cpu_request='100m', node_selector = {}):
+                  cpu_request='100m', node_selector = []):
   
     config = {
               "pod_override": k8s.V1Pod(
