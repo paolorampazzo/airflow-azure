@@ -109,6 +109,7 @@ with DAG(dag_id="download_course",
         folder_path = f'/mnt/mydata/merged_files'
         file_path = f'{folder_path}/{name}-{version}.ts'
         
+        
         try:
             makedirs(folder_path)
         except:  
