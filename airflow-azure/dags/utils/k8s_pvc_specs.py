@@ -32,8 +32,7 @@ def define_k8s_specs(claim_name = '', memory_limit=None, memory_request='300Mi',
                         claim_name=claim_name
                     ))]
         
-        volume_mounts=[k8s.V1VolumeMount(name=claim_name,
-                                                               mount_path="/mnt/mydata")],
+        volume_mounts=[k8s.V1VolumeMount(name=claim_name, mount_path="/mnt/mydata")]
         
         config['pod_override'].spec.volumes = volumes
         config['pod_override'].spec.containers[0].volume_mounts = volume_mounts
