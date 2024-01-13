@@ -27,16 +27,16 @@ with DAG(dag_id="teste",
 ) as dag:
     
     @task(executor_config=define_k8s_specs(node_selector=[{'key': 'kubernetes.azure.com/agentpool',
-                                                          'values': ['basic10'], 'operator': 'In'},
+                                                          'operator': 'In', 'values': ['basic10']},
                                                           {'key': 'meusystem',
-                                                          'values': ['true'], 'operator': 'In'}]))
+                                                          'operator': 'In', 'values': ['true']}]))
     def teste1():
         print(1)
     
     @task(executor_config=define_k8s_specs(node_selectors=[{'key': 'kubernetes.azure.com/agentpool',
-                                                          'values': ['basic10'], 'operator': 'In'},
-                                           {'key': 'meussytem',
-                                                          'values': ['true'], 'operator': 'NotIn'}]))
+                                                          'operator': 'In', 'values': ['basic10']},
+                                                          {'key': 'meussytem',
+                                                          'operator': 'NotIn', 'values': ['true']}]))
     def teste2():
         print(1)
 
