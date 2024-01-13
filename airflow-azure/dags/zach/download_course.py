@@ -28,10 +28,6 @@ with DAG(dag_id="download_course",
         
         metadata = dag_run.conf
 
-        # return [{'name': metadata['name'], 
-        #          'type': metadata['type'], 
-        #         'i': x,
-        #         'version': metadata['version']} for x in range(metadata['max_index']+1)]
         return [{'name': metadata['name'], 
                  'type': metadata['type'], 
                 'i': x,
@@ -58,10 +54,6 @@ with DAG(dag_id="download_course",
         
         prefix = f'https://dataengineer.io/api/v1/content/video/{version}/'
         type = ('lecture' in name and 'lecture') or ('lab' in name and 'lab') or ('recording')
-        # name = raw_url[raw_url.rfind('/v3/')+4:raw_url.rfind('/')]
-
-        # lista_urls = [prefix + f'{name}/{type}{i}.ts' for i in range(0, 2000)]
-        # lista = [lista_gen(x) for x in lista_urls]
 
         try:
             makedirs(folder_path)
