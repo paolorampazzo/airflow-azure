@@ -145,13 +145,13 @@ with DAG(dag_id="download_course",
         
         parent_folder_id = '1zQJCyZSfCvoechPLgFEDOcKKfM0mQ9ej'
 
-        folder_name = 'Zach-{version}'
+        folder_name = f'Zach-{version}'
         folders = list_folder(parent_folder_id)
 
         if folder_name not in folders:
             version_folder_id = create_folder(folder_name, parent_folder_id)
                 
-        create_folder_with_file(file_path, file_path, credentials_filename, version_folder_id)
+        create_folder_with_file(folder_name, file_path, credentials_filename, version_folder_id)
     
 
 
