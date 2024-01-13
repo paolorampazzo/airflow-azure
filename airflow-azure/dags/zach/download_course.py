@@ -111,7 +111,7 @@ with DAG(dag_id="download_course",
         
         try:
             makedirs(folder_path)
-        except:
+        except:  
             pass        
 
         with open(file_path, 'wb') as merged:
