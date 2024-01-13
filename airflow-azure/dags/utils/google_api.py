@@ -16,7 +16,7 @@ try:
 except:
     pass
 
-with open(credentials_filename, 'r') as f:
+with open(credentials_filename, 'w') as f:
     f.write(json_data)
 
 # Define the Google Drive API scopes and service account file path
