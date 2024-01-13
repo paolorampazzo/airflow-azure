@@ -14,7 +14,8 @@ from utils.download_utils import lista_gen, find_last_true_occurrence, claim_nam
 from airflow.models.dagrun import DagRun
 from airflow.models.taskinstance import TaskInstance
 from airflow.utils.trigger_rule import TriggerRule
-
+from utils.download_utils import claim_name
+from airflow.models import Variable
 
 
 with DAG(dag_id="teste", 
@@ -26,18 +27,31 @@ with DAG(dag_id="teste",
      },
 ) as dag:
     
-    @task(executor_config=define_k8s_specs(node_selector=[{'key': 'kubernetes.azure.com/agentpool',
+    @task(executor_config=define_k8s_specs(claim_name = claim_name, node_selector=[{'key': 'kubernetes.azure.com/agentpool',
                                                           'operator': 'In', 'values': ['basic10']},
                                                           {'key': 'meusystem',
                                                           'operator': 'In', 'values': ['true']}]))
     def teste1():
-        print(1)
-    
-    @task(executor_config=define_k8s_specs(node_selector=[{'key': 'kubernetes.azure.com/agentpool',
-                                                          'operator': 'In', 'values': ['basic10']},
-                                                          {'key': 'meussytem',
-                                                          'operator': 'NotIn', 'values': ['true']}]))
-    def teste2():
-        print(1)
+        from os import makedirs
+        from os.path import join
 
-    teste1() >> teste2()
+    
+        json_data = Variable.get('google_json_password')
+        credentials_path = '/mnt/mydata/credentials'
+        try:
+            makedirs(credentials_path)
+        except:
+            pass
+        
+        with open(join(credentials_path, 'credentials.json'), 'r') as f:
+            f.write(json_data)
+    
+    # @task(executor_config=define_k8s_specs(node_selector=[{'key': 'kubernetes.azure.com/agentpool',
+    #                                                       'operator': 'In', 'values': ['basic10']},
+    #                                                       {'key': 'meussytem',
+    #                                                       'operator': 'NotIn', 'values': ['true']}]))
+    # def teste2():
+    #     print(1)
+
+    # teste1() >> teste2()
+    teste1()

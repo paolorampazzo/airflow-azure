@@ -9,9 +9,12 @@ from airflow.models.param import Param
 from kubernetes.client import models as k8s
 from utils.k8s_pvc_specs import define_k8s_specs
 from utils.download_utils import claim_name, lista_gen
+from utils.google_api import list_folder, create_folder_with_file, create_folder
 from airflow.models.dagrun import DagRun
 from airflow.models.taskinstance import TaskInstance
 import json
+from airflow.models import Variable
+
 
 
 with DAG(dag_id="download_course", 
@@ -109,7 +112,7 @@ with DAG(dag_id="download_course",
         folder_path = f'/mnt/mydata/merged_files'
         file_path = f'{folder_path}/{name}-{version}.ts'
         
-        
+
         try:
             makedirs(folder_path)
         except:  
@@ -128,7 +131,38 @@ with DAG(dag_id="download_course",
         except:
             pass
 
-        subprocess.run(['ffmpeg', '-i', infile, outfile])            
+        subprocess.run(['ffmpeg', '-i', infile, outfile])   
+
+        return {'version': version, 'file_path': outfile} 
+
+    @task(executor_config=define_k8s_specs(claim_name = claim_name,
+                                           node_selector=[{'key': 'kubernetes.azure.com/agentpool',
+                                                          'operator': 'In', 'values': ['basic10']},
+                                                          {'key': 'meusystem',
+                                                          'operator': 'NotIn', 'values': ['true']}]))
+    def send_to_google(version, file_path):
+        from os import makedirs
+        from os.path import join
+        
+        json_data = Variable.get('google_json_password')
+        parent_folder_id = '1zQJCyZSfCvoechPLgFEDOcKKfM0mQ9ej'
+
+        folder_name = 'Zach-{version}'
+        folders = list_folder(parent_folder_id)
+
+        if folder_name not in folders:
+            version_folder_id = create_folder(folder_name, parent_folder_id)
+        
+        credentials_path = '/mnt/mydata/credentials'
+        try:
+            makedirs(credentials_path)
+        except:
+            pass
+        
+        with open(join(credentials_path, 'credentials.json'), 'r') as f:
+            f.write(json_data)
+            
+        create_folder_with_file(file_path, file_path, credentials_path, version_folder_id)
     
 
 
@@ -138,7 +172,10 @@ with DAG(dag_id="download_course",
 
     downloads = download_file.partial().expand(metadata = metadata)
 
-    downloads >> merge_files()
+    merge_files_obj = merge_files()
+    downloads >> merge_files_obj
+    
+    send_to_google(merge_files_obj)
 
 
 
