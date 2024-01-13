@@ -71,13 +71,16 @@ with DAG(dag_id="download_course",
 
         try:
             response = get(url, timeout=5)
+            with open(file_path, "wb") as file:
+                file.write(response.content)
+
         except Exception as e:
             if type(e) == ConnectTimeout:
                 raise Exception('timeout em' + str(url))
+            else:
+                raise Exception(e)
 
         # Save the file
-        with open(file_path, "wb") as file:
-            file.write(response.content)
 
     @task(executor_config=define_k8s_specs(claim_name = claim_name,
                                            node_selector=[{'key': 'kubernetes.azure.com/agentpool',
