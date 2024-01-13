@@ -35,7 +35,7 @@ with DAG(dag_id="download_course",
         return [{'name': metadata['name'], 
                  'type': metadata['type'], 
                 'i': x,
-                'version': metadata['version']} for x in range(100)]
+                'version': metadata['version']} for x in range(10)]
     
     @task(executor_config=define_k8s_specs(claim_name = claim_name,
                                            node_selector=[{'key': 'kubernetes.azure.com/agentpool',
