@@ -48,6 +48,7 @@ with DAG(dag_id="download_course",
         from os import makedirs
         
         name = metadata['name']
+        
         type = metadata['type']
         i = metadata['i'] 
         version = metadata['version']
