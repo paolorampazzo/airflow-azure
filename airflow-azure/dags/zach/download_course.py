@@ -9,7 +9,7 @@ from airflow.models.param import Param
 from kubernetes.client import models as k8s
 from utils.k8s_pvc_specs import define_k8s_specs
 from utils.download_utils import claim_name, lista_gen
-from utils.google_api import list_folder, create_folder_with_file, create_folder
+from utils.google_api import list_folder, create_folder_with_file, create_folder, credentials_filename
 from airflow.models.dagrun import DagRun
 from airflow.models.taskinstance import TaskInstance
 import json
@@ -141,10 +141,7 @@ with DAG(dag_id="download_course",
                                                           {'key': 'meusystem',
                                                           'operator': 'NotIn', 'values': ['true']}]))
     def send_to_google(version, file_path):
-        from os import makedirs
-        from os.path import join
         
-        json_data = Variable.get('google_json_password')
         parent_folder_id = '1zQJCyZSfCvoechPLgFEDOcKKfM0mQ9ej'
 
         folder_name = 'Zach-{version}'
@@ -152,17 +149,8 @@ with DAG(dag_id="download_course",
 
         if folder_name not in folders:
             version_folder_id = create_folder(folder_name, parent_folder_id)
-        
-        credentials_path = '/mnt/mydata/credentials'
-        try:
-            makedirs(credentials_path)
-        except:
-            pass
-        
-        with open(join(credentials_path, 'credentials.json'), 'r') as f:
-            f.write(json_data)
-            
-        create_folder_with_file(file_path, file_path, credentials_path, version_folder_id)
+                
+        create_folder_with_file(file_path, file_path, credentials_filename, version_folder_id)
     
 
 
