@@ -140,7 +140,8 @@ with DAG(dag_id="download_course",
                                                           'operator': 'In', 'values': ['basic10']},
                                                           {'key': 'meusystem',
                                                           'operator': 'NotIn', 'values': ['true']}]))
-    def send_to_google(version, file_path):
+    def send_to_google(data):
+        version, file_path = data['version'], data['file_path']
         
         parent_folder_id = '1zQJCyZSfCvoechPLgFEDOcKKfM0mQ9ej'
 
@@ -163,7 +164,7 @@ with DAG(dag_id="download_course",
     merge_files_obj = merge_files()
     downloads >> merge_files_obj
     
-    send_to_google(**merge_files_obj)
+    send_to_google(merge_files_obj)
 
 
 
