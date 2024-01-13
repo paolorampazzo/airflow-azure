@@ -28,10 +28,14 @@ with DAG(dag_id="download_course",
         
         metadata = dag_run.conf
 
+        # return [{'name': metadata['name'], 
+        #          'type': metadata['type'], 
+        #         'i': x,
+        #         'version': metadata['version']} for x in range(metadata['max_index']+1)]
         return [{'name': metadata['name'], 
                  'type': metadata['type'], 
                 'i': x,
-                'version': metadata['version']} for x in range(metadata['max_index']+1)]
+                'version': metadata['version']} for x in range(5)]
     
     @task(executor_config=define_k8s_specs(claim_name = claim_name,
                                            node_selector={'key': 'kubernetes.azure.com/agentpool',
@@ -89,7 +93,7 @@ with DAG(dag_id="download_course",
     # metadata_list = [{**metadata, **{'index': k}} for k in range(metadata['max_index']+1)]
 
 
-    download_file.partial().expand(metadata = metadata[:5])
+    download_file.partial().expand(metadata = metadata)
 
 
 
