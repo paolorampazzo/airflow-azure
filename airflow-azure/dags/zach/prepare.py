@@ -67,7 +67,7 @@ with DAG(dag_id="prepare_download",
     # @task(trigger_rule=TriggerRule.ONE_DONE)
     @task()
     def delete_pvc():
-        
+
         from kubernetes import config, client
         
         config.load_incluster_config()
@@ -76,6 +76,7 @@ with DAG(dag_id="prepare_download",
         patch_payload = [
                 {"op": "remove", "path": "/metadata/finalizers"}
             ]
+
 
         v1.delete_namespaced_persistent_volume_claim(namespace="airflow-azure-workers", name=claim_name)
         v1.patch_namespaced_persistent_volume_claim(name=claim_name, namespace="airflow-azure-workers", 
