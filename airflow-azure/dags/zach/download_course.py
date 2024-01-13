@@ -49,7 +49,7 @@ with DAG(dag_id="download_course",
         
         name = metadata['name']
         type = metadata['type']
-        i = metadata['index']
+        i = metadata['index'] 
         version = metadata['version']
 
         folder_path = f'/mnt/mydata/{name}'
