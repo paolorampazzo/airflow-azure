@@ -40,11 +40,13 @@ def define_k8s_specs(claim_name = '', memory_limit=None, memory_request='300Mi',
 
 
 
+
+
     if len(node_selector):
         key = node_selector['key']
         values = node_selector['values']
         
-        
+
 
         affinity = k8s.V1NodeAffinity(required_during_scheduling_ignored_during_execution = \
                                         [k8s.V1NodeSelectorTerm(match_expressions= [
