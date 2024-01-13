@@ -17,6 +17,7 @@ import json
 with DAG(dag_id="download_course", 
          start_date=datetime(2024, 1, 10),
          catchup=False,
+         fail_stop=True
 ) as dag:
     
     @task()
