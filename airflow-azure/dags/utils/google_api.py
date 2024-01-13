@@ -8,10 +8,11 @@ from airflow.models import Variable
 from os import makedirs
 from os.path import join
 
+credentials_path = '/mnt/mydata/credentials'
+credentials_filename = join(credentials_path, 'credentials.json')
+
 def generate_credentials():
   json_data = Variable.get('google_json_password')
-  credentials_path = '/mnt/mydata/credentials'
-  credentials_filename = join(credentials_path, 'credentials.json')
   try:
       makedirs(credentials_path)
   except:
@@ -107,7 +108,7 @@ def create_folder_with_file(folder_name, file_path, credentials_path, parent_fol
     """Create a folder in Google Drive and upload a local file to it."""
 
     drive_service = generate_credentials()
-    
+
     # Step 1: Create the folder
     folder_metadata = {
         'name': folder_name,
