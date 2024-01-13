@@ -105,11 +105,6 @@ with DAG(dag_id="download_course",
         name = metadata['name']
         version = metadata['version']
 
-
-        subprocess.run(["apt-get", "install", "sudo"])
-        subprocess.run(["sudo", "apt-get", "install", "ffmpeg"])
-        
-
         files_folder_path = f'/mnt/mydata/{version}/{name}'
         folder_path = f'/mnt/mydata/merged_files'
         file_path = f'{folder_path}/{name}-{version}.ts'
@@ -132,7 +127,7 @@ with DAG(dag_id="download_course",
         except:
             pass
 
-        subprocess.run(['sudo', 'ffmpeg', '-i', infile, outfile])            
+        subprocess.run(['ffmpeg', '-i', infile, outfile])            
     
 
 
