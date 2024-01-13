@@ -50,7 +50,7 @@ with DAG(dag_id="download_course",
         version = metadata['version']
  
  
-        folder_path = f'/mnt/mydata/{name}'
+        folder_path = f'/mnt/mydata/{version}/{name}'
         
         prefix = f'https://dataengineer.io/api/v1/content/video/{version}/'
         type = ('lecture' in name and 'lecture') or ('lab' in name and 'lab') or ('recording')
@@ -78,18 +78,65 @@ with DAG(dag_id="download_course",
         with open(file_path, "wb") as file:
             file.write(response.content)
 
-    @task(executor_config=define_k8s_specs(claim_name = claim_name))
-    def get_jwt():
-        with open('/mnt/mydata/teste.txt', 'r') as f:
-            content = f.readlines()
+    @task(executor_config=define_k8s_specs(claim_name = claim_name,
+                                           node_selector=[{'key': 'kubernetes.azure.com/agentpool',
+                                                          'operator': 'In', 'values': ['basic10']},
+                                                          {'key': 'meusystem',
+                                                          'operator': 'NotIn', 'values': ['true']}]))
+    def merge_files(**kwargs):
+        import shutil
+        import subprocess
+        from os import makedirs, listdir, remove
+        import os
+
+
+        ti: TaskInstance = kwargs["ti"] 
+        dag_run: DagRun = ti.dag_run
+
+        print(dag_run.conf)
         
-        print(content)
+        metadata = dag_run.conf
+
+        name = metadata['name']
+        version = metadata['version']
+
+
+        subprocess.run(["apt-get", "install", "ffmpeg"])
+        
+
+        files_folder_path = f'/mnt/mydata/{version}/{name}'
+        folder_path = f'/mnt/mydata/merged_files'
+        file_path = f'{folder_path}/{name}-{version}.ts'
+        
+        try:
+            makedirs(folder_path)
+        except:
+            pass        
+
+        with open(file_path, 'wb') as merged:
+            for ts_file in [x for x in listdir(files_folder_path) if x.endswith('.ts')]:
+                with open(os.path.join(files_folder_path, ts_file), 'rb') as mergefile:
+                    shutil.copyfileobj(mergefile, merged)
+                    
+        infile = file_path
+        outfile = file_path.replace('.ts', '.mp4')
+
+        try:
+            remove(outfile)
+        except:
+            pass
+
+        subprocess.run(['ffmpeg', '-i', infile, outfile])            
+    
+
 
     metadata = get_metadata()
     # metadata_list = [{**metadata, **{'index': k}} for k in range(metadata['max_index']+1)]
 
 
-    download_file.partial().expand(metadata = metadata)
+    downloads = download_file.partial().expand(metadata = metadata)
+
+    downloads >> merge_files()
 
 
 
