@@ -39,6 +39,7 @@ with DAG(dag_id="download_course",
     
     @task(executor_config=define_k8s_specs(claim_name = claim_name,
                                            node_selector=[{'key': 'kubernetes.azure.com/agentpool',
+                                                          'operator': 'In',
                                                           'values': ['basic10']}]))
     def download_file(metadata):
         from requests import get
