@@ -51,7 +51,8 @@ with DAG(dag_id="download_course",
         type = metadata['type']
         i = metadata['index'] 
         version = metadata['version']
-
+ 
+ 
         folder_path = f'/mnt/mydata/{name}'
         
         prefix = f'https://dataengineer.io/api/v1/content/video/{version}/'
