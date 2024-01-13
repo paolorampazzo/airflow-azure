@@ -37,12 +37,13 @@ def define_k8s_specs(claim_name = '', memory_limit=None, memory_request='300Mi',
         
         config['pod_override'].spec.volumes = volumes
         config['pod_override'].spec.containers[0].volume_mounts = volume_mounts
-        
+
 
 
     if len(node_selector):
         key = node_selector['key']
         values = node_selector['values']
+        
         
 
         affinity = k8s.V1NodeAffinity(required_during_scheduling_ignored_during_execution = \
