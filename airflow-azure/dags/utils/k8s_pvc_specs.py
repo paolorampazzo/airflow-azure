@@ -48,12 +48,12 @@ def define_k8s_specs(claim_name = '', memory_limit=None, memory_request='300Mi',
         
 
 
-        affinity = k8s.V1NodeAffinity(required_during_scheduling_ignored_during_execution = \
+        affinity = k8s.v1Affinity(k8s.V1NodeAffinity(required_during_scheduling_ignored_during_execution = \
                                         [k8s.V1NodeSelectorTerm(match_expressions= [
                                             k8s.V1NodeSelectorRequirement(key=key,
                                                                         operator='In',
                                                                         values= values)
-                                        ])])    
+                                        ])]))    
         
         
         config['pod_override'].spec.affinity = affinity 
