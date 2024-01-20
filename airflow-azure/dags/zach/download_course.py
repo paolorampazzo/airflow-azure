@@ -69,13 +69,14 @@ with DAG(dag_id="download_course",
         
             parent_folder_id = PARENT_FOLDER_ID
             folder_path = f'/mnt/mydata/merged_files'
-            file_path = f'{folder_path}/{name}-{version}.txt'
+            filename = {name}-{version}.txt
+            file_path = f'{folder_path}/{filename}'
 
             with open(file_path, 'w') as f:
                 for line in ['Error']:
                     f.write(f"{line}\n")
                     
-            send_to_drive(version, name, parent_folder_id, file_path, filename='Erro', overwrite=True)
+            send_to_drive(version, name, parent_folder_id, file_path, filename=filename, overwrite=True)
             os.remove(file_path)
 
             return
