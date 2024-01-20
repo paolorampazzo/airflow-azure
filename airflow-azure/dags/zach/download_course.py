@@ -15,6 +15,7 @@ from airflow.models.taskinstance import TaskInstance
 import json
 from airflow.models import Variable
 
+PARENT_FOLDER_ID = '1zQJCyZSfCvoechPLgFEDOcKKfM0mQ9ej'
 
 
 with DAG(dag_id="download_course", 
@@ -34,15 +35,19 @@ with DAG(dag_id="download_course",
         metadata = dag_run.conf
 
         max_index = metadata['max_index']
+        max_index = min(max_index, 50)
+
+        if max_index == -1:
+            max_index = 0
 
         return [{'name': metadata['name'], 
                  'type': metadata['type'], 
                 'i': x,
-                'version': metadata['version']} for x in range(max_index + 1)] if max_index > 0 else []
+                'version': metadata['version'], 'error': True if max_index == 0 else False} for x in range(max_index + 1)] 
     
-    @task(executor_config=define_k8s_specs(claim_name = claim_name,
+    @task(weight_rule='upstream', executor_config=define_k8s_specs(claim_name = claim_name,
                                            node_selector=[{'key': 'kubernetes.azure.com/agentpool',
-                                                          'operator': 'In', 'values': ['basic10']},
+                                                          'operator': 'NotIn', 'values': ['paolo1']},
                                                           {'key': 'meusystem',
                                                           'operator': 'NotIn', 'values': ['true']}]))
     def download_file(metadata):
@@ -55,6 +60,34 @@ with DAG(dag_id="download_course",
         type_ = metadata['type']
         i = metadata['i'] 
         version = metadata['version']
+        error = metadata['error']
+
+        if error:
+        
+            parent_folder_id = PARENT_FOLDER_ID
+
+            folder_name = f'Zach-{version}'
+            folders = list_folder(parent_folder_id)
+
+            folder_id = ''
+
+            for folder in folders:
+                if folder_name == folder['name']:
+                    folder_id = folder['id']
+                
+            if not folder_id:
+                folder_id = create_folder(folder_name, parent_folder_id)
+
+            file_path = f'/mnt/mydata/{version}/{name}'
+            file_content = [f'Error: true']
+
+            with open(file_path, 'w') as f:
+                for line in file_content:
+                    f.write(f"{line}\n")
+                    
+            create_folder_with_file(folder_name, file_path, credentials_filename, folder_id)
+            return
+            
  
  
         folder_path = f'/mnt/mydata/{version}/{name}'
@@ -90,7 +123,7 @@ with DAG(dag_id="download_course",
 
     @task(executor_config=define_k8s_specs(claim_name = claim_name,
                                            node_selector=[{'key': 'kubernetes.azure.com/agentpool',
-                                                          'operator': 'In', 'values': ['basic10']},
+                                                          'operator': 'NotIn', 'values': ['paolo1']},
                                                           {'key': 'meusystem',
                                                           'operator': 'NotIn', 'values': ['true']}]))
     def merge_files(**kwargs):
@@ -139,13 +172,13 @@ with DAG(dag_id="download_course",
 
     @task(executor_config=define_k8s_specs(claim_name = claim_name,
                                            node_selector=[{'key': 'kubernetes.azure.com/agentpool',
-                                                          'operator': 'In', 'values': ['basic10']},
+                                                          'operator': 'NotIn', 'values': ['paolo1']},
                                                           {'key': 'meusystem',
                                                           'operator': 'NotIn', 'values': ['true']}]))
     def send_to_google(data):
         version, file_path = data['version'], data['file_path']
         
-        parent_folder_id = '1zQJCyZSfCvoechPLgFEDOcKKfM0mQ9ej'
+        parent_folder_id = PARENT_FOLDER_ID
 
         folder_name = f'Zach-{version}'
         folders = list_folder(parent_folder_id)
@@ -168,7 +201,7 @@ with DAG(dag_id="download_course",
 
     @task(executor_config=define_k8s_specs(claim_name = claim_name,
                                            node_selector=[{'key': 'kubernetes.azure.com/agentpool',
-                                                          'operator': 'In', 'values': ['basic10']},
+                                                          'operator': 'NotIn', 'values': ['paolo1']},
                                                           {'key': 'meusystem',
                                                           'operator': 'NotIn', 'values': ['true']}]))
     def delete_files(**kwargs):
