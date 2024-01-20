@@ -22,7 +22,6 @@ PARENT_FOLDER_ID = '1zQJCyZSfCvoechPLgFEDOcKKfM0mQ9ej'
 with DAG(dag_id="download_course", 
          start_date=datetime(2024, 1, 10),
          catchup=False,
-         priority_weight='upstream'
         #  max_active_runs = 50,
         #  max_active_tasks = 200,
 ) as dag:
@@ -142,7 +141,7 @@ with DAG(dag_id="download_course",
                 
     
 
-    @task(executor_config=define_k8s_specs(claim_name = claim_name,
+    @task(priority_weight=10, executor_config=define_k8s_specs(claim_name = claim_name,
                                            node_selector=[{'key': 'kubernetes.azure.com/agentpool',
                                                           'operator': 'NotIn', 'values': ['paolo1']},
                                                           {'key': 'meusystem',
