@@ -1,7 +1,7 @@
 """Example DAG demonstrating the usage of dynamic task mapping."""
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from airflow.decorators import task, task_group
 from airflow.models.dag import DAG
@@ -46,7 +46,8 @@ with DAG(dag_id="download_course",
                 'i': x,
                 'version': metadata['version'], 'error': True if max_index == 0 else False} for x in range(max_index + 1)] 
     
-    @task(retries=3, executor_config=define_k8s_specs(claim_name = claim_name,
+    @task(retries=3, retry_delay = timedelta(seconds=5),
+          executor_config=define_k8s_specs(claim_name = claim_name,
                                            node_selector=[{'key': 'kubernetes.azure.com/agentpool',
                                                           'operator': 'NotIn', 'values': ['paolo1']},
                                                           {'key': 'meusystem',
