@@ -243,9 +243,17 @@ with DAG(dag_id="download_course",
         version = metadata['version']
 
         files_folder_path = f'/mnt/mydata/{version}/{name}'
+        folder_path = f'/mnt/mydata/merged_files'
+        merged_folder = f'{folder_path}/{name}-{version}'
+        # file_paths = [merged_folder + x for x in ['.ts', '.mp4']]
 
         for file in os.listdir(files_folder_path):
             os.remove(file)
+
+        for file in os.listdir(merged_folder):
+            os.remove(file)
+
+        
 
     finish = DummyOperator(task_id="finish")
 
