@@ -218,7 +218,7 @@ def send_to_drive(version, course_folder, parent_folder_id, file_path, filename,
             print(course_folder)
             print('found', course_name_folder_id)    
     
-    if not folders_in_zach_folder:
+    if not course_name_folder_id:
         create_folder_with_file(course_folder, file_path, credentials_path, zach_folder_id)
     else:
         if overwrite:
