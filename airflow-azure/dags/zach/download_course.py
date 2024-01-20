@@ -56,6 +56,7 @@ with DAG(dag_id="download_course",
         from requests import get
         from requests.exceptions import ConnectTimeout
         from os import makedirs
+        import os
         
         name = metadata['name'] 
 
@@ -67,27 +68,16 @@ with DAG(dag_id="download_course",
         if error:
         
             parent_folder_id = PARENT_FOLDER_ID
-
-            folder_name = f'Zach-{version}'
-            folders = list_folder(parent_folder_id)
-
-            folder_id = ''
-
-            for folder in folders:
-                if folder_name == folder['name']:
-                    folder_id = folder['id']
-                
-            if not folder_id:
-                folder_id = create_folder(folder_name, parent_folder_id)
-
-            file_path = f'/mnt/mydata/{version}/{name}'
-            file_content = [f'Error: true']
+            folder_path = f'/mnt/mydata/merged_files'
+            file_path = f'{folder_path}/{name}-{version}.txt'
 
             with open(file_path, 'w') as f:
-                for line in file_content:
+                for line in ['Error']:
                     f.write(f"{line}\n")
                     
-            create_folder_with_file(folder_name, file_path, folder_id)
+            send_to_drive(version, name, parent_folder_id, file_path, filename='Erro', overwrite=True)
+            os.remove(file_path)
+
             return
             
  
