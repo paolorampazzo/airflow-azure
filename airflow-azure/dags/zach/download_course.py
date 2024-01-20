@@ -9,7 +9,7 @@ from airflow.models.param import Param
 from kubernetes.client import models as k8s
 from utils.k8s_pvc_specs import define_k8s_specs
 from utils.download_utils import claim_name, lista_gen
-from utils.google_api import list_folder, create_folder_with_file, create_folder, credentials_filename, send_to_drive
+from utils.google_api import list_folder, create_folder_with_file, create_folder, send_to_drive
 from airflow.models.dagrun import DagRun
 from airflow.models.taskinstance import TaskInstance
 from airflow.operators.dummy_operator import DummyOperator
@@ -87,7 +87,7 @@ with DAG(dag_id="download_course",
                 for line in file_content:
                     f.write(f"{line}\n")
                     
-            create_folder_with_file(folder_name, file_path, credentials_filename, folder_id)
+            create_folder_with_file(folder_name, file_path, folder_id)
             return
             
  
@@ -218,7 +218,7 @@ with DAG(dag_id="download_course",
         if not folder_id:
             folder_id = create_folder(folder_name, parent_folder_id)
                 
-        create_folder_with_file(name, file_path, credentials_filename, folder_id)
+        create_folder_with_file(name, file_path, folder_id)
     
 
 
