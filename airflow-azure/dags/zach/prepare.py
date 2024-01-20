@@ -20,6 +20,9 @@ from airflow.utils.trigger_rule import TriggerRule
 with DAG(dag_id="prepare_download", 
          start_date=datetime(2024, 1, 10),
          catchup=False,
+         max_active_runs = 10,
+         max_active_tasks = 100,
+         weight_rule='upstream',
          params={
          "version": Param('v3', enum=["v1", "v2", "v3"]),
          "cookies": Param('', type='string')
@@ -87,7 +90,7 @@ with DAG(dag_id="prepare_download",
         with open('/opt/airflow/dags/repo/airflow-azure/dags/zach/pages.pkl', 'rb') as f:
             pages = pickle.load(f)
 
-        return pages[:5]
+        return pages[:10]
     
     @task
     def get_parameters(**kwargs):
@@ -110,7 +113,7 @@ with DAG(dag_id="prepare_download",
         lista = [lista_gen(x) for x in lista_urls]       
         max_index = find_last_true_occurrence(lista) 
         
-        max_index = min(5, max_index)
+        # max_index = min(5, max_index)
         return {'name': name, 'type': type, 'max_index': max_index,
                 'version': version}
     

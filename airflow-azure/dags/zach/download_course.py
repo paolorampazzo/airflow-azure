@@ -20,6 +20,8 @@ from airflow.models import Variable
 with DAG(dag_id="download_course", 
          start_date=datetime(2024, 1, 10),
          catchup=False,
+         max_active_runs = 10,
+         max_active_tasks = 100,
 ) as dag:
     
     @task()
