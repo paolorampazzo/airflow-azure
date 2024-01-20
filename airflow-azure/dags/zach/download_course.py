@@ -12,6 +12,7 @@ from utils.download_utils import claim_name, lista_gen
 from utils.google_api import list_folder, create_folder_with_file, create_folder, credentials_filename
 from airflow.models.dagrun import DagRun
 from airflow.models.taskinstance import TaskInstance
+from airflow.operators.dummy_operator import DummyOperator
 import json
 from airflow.models import Variable
 
@@ -138,6 +139,8 @@ with DAG(dag_id="download_course",
 
         if error:
             return 'merge_files'
+        
+        return 'finish'
                 
     
 
@@ -242,11 +245,14 @@ with DAG(dag_id="download_course",
         for file in os.listdir(files_folder_path):
             os.remove(file)
 
+    finish = DummyOperator(task_id="finish")
+
     downloads = download_file.partial().expand(metadata = metadata)
 
     merge_files_obj = merge_files()
     filter_errors_obj = filter_errors()
     filter_errors_obj >> merge_files_obj
+    filter_errors_obj >> finish
     downloads >> filter_errors_obj >> send_to_google(merge_files_obj) >> delete_files()
 
 
