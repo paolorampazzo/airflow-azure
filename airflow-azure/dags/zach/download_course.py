@@ -232,10 +232,10 @@ with DAG(dag_id="download_course",
         # file_paths = [merged_folder + x for x in ['.ts', '.mp4']]
 
         for file in os.listdir(files_folder_path):
-            os.remove(file)
+            os.remove(os.path.join(files_folder_path, file))
 
         for file in os.listdir(merged_folder):
-            os.remove(file)
+            os.remove(os.path.join(merged_folder, file))
 
         
 
