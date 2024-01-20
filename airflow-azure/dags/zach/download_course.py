@@ -244,7 +244,10 @@ with DAG(dag_id="download_course",
 
     downloads = download_file.partial().expand(metadata = metadata)
 
-    downloads >> filter_errors() >> send_to_google(merge_files()) >> delete_files()
+    merge_files_obj = merge_files()
+    filter_errors_obj = filter_errors()
+    filter_errors_obj >> merge_files_obj
+    downloads >> filter_errors_obj >> send_to_google(merge_files_obj) >> delete_files()
 
 
 
