@@ -203,8 +203,9 @@ with DAG(dag_id="download_course",
         version, file_path, name = data['version'], data['file_path'], data['name']
         
         parent_folder_id = PARENT_FOLDER_ID
-
-        send_to_drive(version, name, parent_folder_id, file_path, filename=name, overwrite=True)
+        
+        filename = name + '.mp4'
+        send_to_drive(version, name, parent_folder_id, file_path, filename, overwrite=True)
 
         
 
