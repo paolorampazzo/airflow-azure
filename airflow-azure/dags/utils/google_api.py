@@ -176,7 +176,7 @@ def update_file(file_path, file_id):
 
     return file_id
 
-def send_to_drive(version, course_folder, parent_folder_id, file_path, filename, overwrite = False):
+def send_to_drive(version, course_folder, parent_folder_id, file_path, filename, overwrite = False, error=False):
 
     print('filepath =', file_path)
     print('filename =', filename)
@@ -198,17 +198,18 @@ def send_to_drive(version, course_folder, parent_folder_id, file_path, filename,
         create_folder_with_file(course_folder, file_path, zach_folder_id)
         return
 
-    # folders = list_folder(parent_folder_id)
-    # print('folders', folders)
-
-    # file_path = '/opt/airflow/dags/teste.txt'
-    # filename = file_path[file_path.rfind('/')+1:]
-
-    # with open('teste.txt', 'w') as f:
-    #     f.write('aasdasdsa')
-
-    # Check if folder already exists    
     folders_in_zach_folder = list_folder(zach_folder_id)
+
+    if error:
+        for folder in folders_in_zach_folder:
+            if 'Errors' == folder['name']:
+                zach_folder_id = folder['id']
+                print('error found', zach_folder_id)   
+                 
+        folders_in_zach_folder = list_folder(zach_folder_id)
+
+    
+                
 
     course_name_folder_id = ''
 
@@ -227,5 +228,5 @@ def send_to_drive(version, course_folder, parent_folder_id, file_path, filename,
             update_file(file_path, file_id)
         else:
             upload_file(file_path, course_name_folder_id)
-            
+
     
