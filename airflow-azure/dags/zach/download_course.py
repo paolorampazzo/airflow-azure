@@ -72,6 +72,11 @@ with DAG(dag_id="download_course",
             filename = f'{name}-{version}.txt'
             file_path = f'{folder_path}/{filename}'
 
+            try:
+                makedirs(folder_path)
+            except:
+                pass
+
             with open(file_path, 'w') as f:
                 for line in ['Error']:
                     f.write(f"{line}\n")
