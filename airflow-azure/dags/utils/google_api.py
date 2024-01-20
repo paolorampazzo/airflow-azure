@@ -178,6 +178,9 @@ def update_file(file_path, file_id):
 
 def send_to_drive(version, course_folder, parent_folder_id, file_path, filename, overwrite = False):
 
+    print('filepath =', file_path)
+    print('filename =', filename)
+    
     folder_name = f'Zach-{version}'
     folders = list_folder(parent_folder_id)
 
