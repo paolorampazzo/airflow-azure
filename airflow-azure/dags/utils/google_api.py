@@ -104,7 +104,7 @@ def download_file(file_id, destination_path):
 
 import os
 
-def create_folder_with_file(folder_name, file_path, credentials_path, parent_folder_id=None):
+def create_folder_with_file(folder_name, file_path, parent_folder_id=None):
     """Create a folder in Google Drive and upload a local file to it."""
 
     drive_service = generate_credentials()
@@ -139,3 +139,87 @@ def create_folder_with_file(folder_name, file_path, credentials_path, parent_fol
     print(f'Uploaded File ID: {file_id}')
 
     return folder_id, file_id
+
+def upload_file(file_path, parent_folder_id=None):
+    """Create a folder in Google Drive and upload a local file to it."""
+
+    drive_service = generate_credentials()
+
+    # Step 2: Upload the local file to the created folder
+    file_metadata = {'name': os.path.basename(file_path), 'parents': [parent_folder_id]}
+
+    media = MediaFileUpload(file_path, resumable=True)
+
+    uploaded_file = drive_service.files().create(
+        body=file_metadata,
+        media_body=media,
+        fields='id'
+    ).execute()
+
+    file_id = uploaded_file['id']
+    print(f'Uploaded File ID: {file_id}')
+
+    return file_id
+
+def update_file(file_path, file_id):
+    """Create a folder in Google Drive and upload a local file to it."""
+
+    drive_service = generate_credentials()
+
+    media = MediaFileUpload(file_path, resumable=True)
+
+    updated_file = drive_service.files().update(fileId=file_id,
+    media_body=media).execute()
+
+    file_id = updated_file['id']
+    print(f'Updated File ID: {file_id}')
+
+    return file_id
+
+def send_to_drive(version, parent_folder_id, file_path, filename, overwrite = False):
+    version = 'v3'
+
+    folder_name = f'Zach-{version}'
+    folders = list_folder(parent_folder_id)
+
+    folder_id = ''
+
+    for folder in folders:
+        if folder_name == folder['name']:
+            folder_id = folder['id']
+            print('found', folder_id)
+        
+    print('folders', folders)
+    if not folder_id:
+        folder_id = create_folder(folder_name, parent_folder_id)
+        print(folder_id)   
+
+    # folders = list_folder(parent_folder_id)
+    # print('folders', folders)
+
+    # file_path = '/opt/airflow/dags/teste.txt'
+    # filename = file_path[file_path.rfind('/')+1:]
+
+    # with open('teste.txt', 'w') as f:
+    #     f.write('aasdasdsa')
+
+    # Check if folder already exists    
+    folders = list_folder(folder_id)
+
+    name_folder_id = ''
+
+    course_folder = 'meucurso'
+    for folder in folders:
+        if course_folder == folder['name']:
+            name_folder_id = folder['id']
+            print('found', name_folder_id)    
+    
+    if not folders:
+        create_folder_with_file(course_folder, 'teste.txt', 'credentials.json', folder_id)
+    else:
+        if overwrite:
+            file_id = [file['id'] for file in list_folder(name_folder_id) if file['name'] == filename][0]
+            update_file(file_path, file_id, 'credentials.json')
+        else:
+            upload_file(file_path, 'credentials.json', name_folder_id)
+    

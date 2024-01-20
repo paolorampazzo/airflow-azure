@@ -9,7 +9,7 @@ from airflow.models.param import Param
 from kubernetes.client import models as k8s
 from utils.k8s_pvc_specs import define_k8s_specs
 from utils.download_utils import claim_name, lista_gen
-from utils.google_api import list_folder, create_folder_with_file, create_folder, credentials_filename
+from utils.google_api import list_folder, create_folder_with_file, create_folder, credentials_filename, send_to_drive
 from airflow.models.dagrun import DagRun
 from airflow.models.taskinstance import TaskInstance
 from airflow.operators.dummy_operator import DummyOperator
@@ -192,7 +192,7 @@ with DAG(dag_id="download_course",
 
         subprocess.run(['ffmpeg', '-i', infile, outfile])   
 
-        return {'version': version, 'file_path': outfile} 
+        return {'version': version, 'file_path': outfile, 'name': name} 
 
     @task(executor_config=define_k8s_specs(claim_name = claim_name,
                                            node_selector=[{'key': 'kubernetes.azure.com/agentpool',
@@ -200,7 +200,7 @@ with DAG(dag_id="download_course",
                                                           {'key': 'meusystem',
                                                           'operator': 'NotIn', 'values': ['true']}]))
     def send_to_google(data):
-        version, file_path = data['version'], data['file_path']
+        version, file_path, name = data['version'], data['file_path'], data['name']
         
         parent_folder_id = PARENT_FOLDER_ID
 
@@ -209,6 +209,8 @@ with DAG(dag_id="download_course",
 
         folder_id = ''
 
+        send_to_drive(version, parent_folder_id, file_path, filename=name, overwrite=True)
+
         for folder in folders:
             if folder_name == folder['name']:
                 folder_id = folder['id']
@@ -216,7 +218,7 @@ with DAG(dag_id="download_course",
         if not folder_id:
             folder_id = create_folder(folder_name, parent_folder_id)
                 
-        create_folder_with_file(folder_name, file_path, credentials_filename, folder_id)
+        create_folder_with_file(name, file_path, credentials_filename, folder_id)
     
 
 
