@@ -165,11 +165,12 @@ with DAG(dag_id="download_course",
 
         files_folder_path = f'/mnt/mydata/{version}/{name}'
         folder_path = f'/mnt/mydata/merged_files'
-        file_path = f'{folder_path}/{name}-{version}.ts'
+        merged_folder = f'{folder_path}/{name}-{version}'
+        file_path = f'{merged_folder}/{name}-{version}.ts'
         
 
         try:
-            makedirs(folder_path)
+            makedirs(merged_folder)
         except:  
             pass        
  
