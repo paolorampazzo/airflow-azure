@@ -193,6 +193,8 @@ def send_to_drive(version, course_folder, parent_folder_id, file_path, filename,
     if not folder_id:
         folder_id = create_folder(folder_name, parent_folder_id)
         print(folder_id)   
+        create_folder_with_file(course_folder, file_path, folder_id)
+        return
 
     # folders = list_folder(parent_folder_id)
     # print('folders', folders)
@@ -214,11 +216,11 @@ def send_to_drive(version, course_folder, parent_folder_id, file_path, filename,
             print('found', name_folder_id)    
     
     if not folders:
-        create_folder_with_file(course_folder, 'teste.txt', 'credentials.json', folder_id)
+        create_folder_with_file(course_folder, 'teste.txt', credentials_path, folder_id)
     else:
         if overwrite:
             file_id = [file['id'] for file in list_folder(name_folder_id) if file['name'] == filename][0]
-            update_file(file_path, file_id, 'credentials.json')
+            update_file(file_path, file_id, credentials_path)
         else:
-            upload_file(file_path, 'credentials.json', name_folder_id)
+            upload_file(file_path, credentials_path, name_folder_id)
     

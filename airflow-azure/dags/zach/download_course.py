@@ -204,22 +204,9 @@ with DAG(dag_id="download_course",
         
         parent_folder_id = PARENT_FOLDER_ID
 
-        folder_name = f'Zach-{version}'
-        folders = list_folder(parent_folder_id)
-
-        folder_id = ''
-
         send_to_drive(version, name, parent_folder_id, file_path, filename=name, overwrite=True)
 
-        for folder in folders:
-            if folder_name == folder['name']:
-                folder_id = folder['id']
-            
-        if not folder_id:
-            folder_id = create_folder(folder_name, parent_folder_id)
-                
-        create_folder_with_file(name, file_path, folder_id)
-    
+        
 
 
     metadata = get_metadata()
