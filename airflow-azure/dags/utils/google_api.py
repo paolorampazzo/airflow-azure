@@ -176,7 +176,7 @@ def update_file(file_path, file_id):
 
     return file_id
 
-def send_to_drive(version, parent_folder_id, file_path, filename, overwrite = False):
+def send_to_drive(version, course_folder, parent_folder_id, file_path, filename, overwrite = False):
     version = 'v3'
 
     folder_name = f'Zach-{version}'
@@ -208,7 +208,6 @@ def send_to_drive(version, parent_folder_id, file_path, filename, overwrite = Fa
 
     name_folder_id = ''
 
-    course_folder = 'meucurso'
     for folder in folders:
         if course_folder == folder['name']:
             name_folder_id = folder['id']

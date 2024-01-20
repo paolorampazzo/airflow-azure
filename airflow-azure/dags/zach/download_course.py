@@ -209,7 +209,7 @@ with DAG(dag_id="download_course",
 
         folder_id = ''
 
-        send_to_drive(version, parent_folder_id, file_path, filename=name, overwrite=True)
+        send_to_drive(version, name, parent_folder_id, file_path, filename=name, overwrite=True)
 
         for folder in folders:
             if folder_name == folder['name']:
