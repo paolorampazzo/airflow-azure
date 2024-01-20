@@ -219,12 +219,12 @@ def send_to_drive(version, course_folder, parent_folder_id, file_path, filename,
             print('found', course_name_folder_id)    
     
     if not course_name_folder_id:
-        create_folder_with_file(course_folder, file_path, credentials_path, zach_folder_id)
+        create_folder_with_file(course_folder, file_path, zach_folder_id)
     else:
         if overwrite:
 
             file_id = [file['id'] for file in list_folder(course_name_folder_id) if file['name'] == filename][0]
             update_file(file_path, file_id)
         else:
-            upload_file(file_path, credentials_path, course_name_folder_id)
+            upload_file(file_path, course_name_folder_id)
     
