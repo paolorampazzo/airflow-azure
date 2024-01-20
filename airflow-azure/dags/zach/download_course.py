@@ -68,7 +68,7 @@ with DAG(dag_id="download_course",
         if error:
         
             parent_folder_id = PARENT_FOLDER_ID
-            folder_path = f'/mnt/mydata/merged_files'
+            folder_path = f'/mnt/mydata/merged_files/{name}'
             filename = f'{name}-{version}.txt'
             file_path = f'{folder_path}/{filename}'
 
