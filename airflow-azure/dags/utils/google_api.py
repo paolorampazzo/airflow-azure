@@ -177,23 +177,22 @@ def update_file(file_path, file_id):
     return file_id
 
 def send_to_drive(version, course_folder, parent_folder_id, file_path, filename, overwrite = False):
-    version = 'v3'
 
     folder_name = f'Zach-{version}'
     folders = list_folder(parent_folder_id)
 
-    folder_id = ''
+    zach_folder_id = ''
 
     for folder in folders:
         if folder_name == folder['name']:
-            folder_id = folder['id']
-            print('found', folder_id)
+            zach_folder_id = folder['id']
+            print('found', zach_folder_id)
         
     print('folders', folders)
-    if not folder_id:
-        folder_id = create_folder(folder_name, parent_folder_id)
-        print(folder_id)   
-        create_folder_with_file(course_folder, file_path, folder_id)
+    if not zach_folder_id:
+        zach_folder_id = create_folder(folder_name, parent_folder_id)
+        print(zach_folder_id)   
+        create_folder_with_file(course_folder, file_path, zach_folder_id)
         return
 
     # folders = list_folder(parent_folder_id)
@@ -206,21 +205,22 @@ def send_to_drive(version, course_folder, parent_folder_id, file_path, filename,
     #     f.write('aasdasdsa')
 
     # Check if folder already exists    
-    folders = list_folder(folder_id)
+    folders_in_zach_folder = list_folder(zach_folder_id)
 
-    name_folder_id = ''
+    course_name_folder_id = ''
 
-    for folder in folders:
+    for folder in folders_in_zach_folder:
         if course_folder == folder['name']:
-            name_folder_id = folder['id']
-            print('found', name_folder_id)    
+            course_name_folder_id = folder['id']
+            print(course_folder)
+            print('found', course_name_folder_id)    
     
-    if not folders:
-        create_folder_with_file(course_folder, file_path, credentials_path, folder_id)
+    if not folders_in_zach_folder:
+        create_folder_with_file(course_folder, file_path, credentials_path, zach_folder_id)
     else:
         if overwrite:
-            file_id = [file['id'] for file in list_folder(name_folder_id) if file['name'] == filename][0]
+            file_id = [file['id'] for file in list_folder(course_name_folder_id) if file['name'] == filename][0]
             update_file(file_path, file_id, credentials_path)
         else:
-            upload_file(file_path, credentials_path, name_folder_id)
+            upload_file(file_path, credentials_path, course_name_folder_id)
     
