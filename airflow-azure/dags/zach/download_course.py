@@ -166,7 +166,6 @@ with DAG(dag_id="download_course",
 
         name = metadata['name']
         version = metadata['version']
-        error = metadata['error']
 
         files_folder_path = f'/mnt/mydata/{version}/{name}'
         folder_path = f'/mnt/mydata/merged_files'
