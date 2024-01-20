@@ -126,6 +126,26 @@ with DAG(dag_id="download_course",
                                                           'operator': 'NotIn', 'values': ['paolo1']},
                                                           {'key': 'meusystem',
                                                           'operator': 'NotIn', 'values': ['true']}]))
+    def filter_errors(**kwargs):
+        ti: TaskInstance = kwargs["ti"] 
+        dag_run: DagRun = ti.dag_run
+
+        print(dag_run.conf)
+        
+        metadata = dag_run.conf
+
+        error = metadata['error']
+
+        if error:
+            return 'merge_files'
+                
+    
+
+    @task(executor_config=define_k8s_specs(claim_name = claim_name,
+                                           node_selector=[{'key': 'kubernetes.azure.com/agentpool',
+                                                          'operator': 'NotIn', 'values': ['paolo1']},
+                                                          {'key': 'meusystem',
+                                                          'operator': 'NotIn', 'values': ['true']}]))
     def merge_files(**kwargs):
         import shutil
         import subprocess
@@ -142,6 +162,7 @@ with DAG(dag_id="download_course",
 
         name = metadata['name']
         version = metadata['version']
+        error = metadata['error']
 
         files_folder_path = f'/mnt/mydata/{version}/{name}'
         folder_path = f'/mnt/mydata/merged_files'
@@ -224,7 +245,7 @@ with DAG(dag_id="download_course",
     downloads = download_file.partial().expand(metadata = metadata)
 
     merge_files_obj = merge_files()
-    downloads >> merge_files_obj
+    downloads >> filter_errors()
     
     send_to_google(merge_files_obj) >> delete_files()
 
