@@ -45,7 +45,7 @@ with DAG(dag_id="download_course",
                 'i': x,
                 'version': metadata['version'], 'error': True if max_index == 0 else False} for x in range(max_index + 1)] 
     
-    @task(weight_rule='upstream', executor_config=define_k8s_specs(claim_name = claim_name,
+    @task(retries=3, executor_config=define_k8s_specs(claim_name = claim_name,
                                            node_selector=[{'key': 'kubernetes.azure.com/agentpool',
                                                           'operator': 'NotIn', 'values': ['paolo1']},
                                                           {'key': 'meusystem',
