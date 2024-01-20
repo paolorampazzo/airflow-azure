@@ -201,15 +201,20 @@ def send_to_drive(version, course_folder, parent_folder_id, file_path, filename,
     folders_in_zach_folder = list_folder(zach_folder_id)
 
     if error:
+        has_error_folder = False
+        error_folder_name = 'Errors'
+
         for folder in folders_in_zach_folder:
-            if 'Errors' == folder['name']:
+            if error_folder_name == folder['name']:
                 zach_folder_id = folder['id']
                 print('error found', zach_folder_id)   
-                 
+                has_error_folder = True
+
+        if not has_error_folder:
+            zach_folder_id = create_folder(error_folder_name, parent_folder_id=zach_folder_id)
+        
         folders_in_zach_folder = list_folder(zach_folder_id)
 
-    
-                
 
     course_name_folder_id = ''
 
