@@ -224,7 +224,7 @@ def send_to_drive(version, course_folder, parent_folder_id, file_path, filename,
         if overwrite:
 
             file_id = [file['id'] for file in list_folder(course_name_folder_id) if file['name'] == filename][0]
-            update_file(file_path, file_id, credentials_path)
+            update_file(file_path, file_id)
         else:
             upload_file(file_path, credentials_path, course_name_folder_id)
     
