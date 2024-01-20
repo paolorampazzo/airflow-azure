@@ -81,7 +81,7 @@ with DAG(dag_id="download_course",
                 for line in ['Error']:
                     f.write(f"{line}\n")
                     
-            send_to_drive(version, name, parent_folder_id, file_path, filename=filename, overwrite=True)
+            send_to_drive(version, name, parent_folder_id, file_path, filename=filename, overwrite=True, error=True)
             os.remove(file_path)
 
             return
