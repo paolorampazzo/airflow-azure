@@ -121,7 +121,7 @@ with DAG(dag_id="download_course",
 
         # Save the file 
 
-    @task(executor_config=define_k8s_specs(claim_name = claim_name,
+    @task.branch(executor_config=define_k8s_specs(claim_name = claim_name,
                                            node_selector=[{'key': 'kubernetes.azure.com/agentpool',
                                                           'operator': 'NotIn', 'values': ['paolo1']},
                                                           {'key': 'meusystem',
