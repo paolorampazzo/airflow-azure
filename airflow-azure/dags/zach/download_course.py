@@ -36,7 +36,7 @@ with DAG(dag_id="download_course",
         metadata = dag_run.conf
 
         max_index = metadata['max_index']
-        max_index = min(max_index, 200)
+        max_index = min(max_index, 20)
 
         if max_index == -1:
             max_index = 0
