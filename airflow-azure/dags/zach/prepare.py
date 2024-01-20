@@ -22,7 +22,6 @@ with DAG(dag_id="prepare_download",
          catchup=False,
          max_active_runs = 10,
          max_active_tasks = 100,
-         priority_weight='upstream',
          params={
          "version": Param('v3', enum=["v1", "v2", "v3"]),
          "cookies": Param('', type='string')
@@ -121,6 +120,7 @@ with DAG(dag_id="prepare_download",
         task_id="download_files_dag",
         trigger_dag_id="download_course",
         wait_for_completion=True,
+        weight_rule='upstream'
     )
 
 
