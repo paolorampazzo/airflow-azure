@@ -20,8 +20,8 @@ from airflow.models import Variable
 with DAG(dag_id="download_course", 
          start_date=datetime(2024, 1, 10),
          catchup=False,
-         max_active_runs = 10,
-         max_active_tasks = 100,
+         max_active_runs = 50,
+         max_active_tasks = 200,
 ) as dag:
     
     @task()
@@ -166,13 +166,34 @@ with DAG(dag_id="download_course",
     metadata = get_metadata()
     # metadata_list = [{**metadata, **{'index': k}} for k in range(metadata['max_index']+1)]
 
+    @task(executor_config=define_k8s_specs(claim_name = claim_name,
+                                           node_selector=[{'key': 'kubernetes.azure.com/agentpool',
+                                                          'operator': 'In', 'values': ['basic10']},
+                                                          {'key': 'meusystem',
+                                                          'operator': 'NotIn', 'values': ['true']}]))
+    def delete_files(**kwargs):
+        import os
+        ti: TaskInstance = kwargs["ti"] 
+        dag_run: DagRun = ti.dag_run
+
+        print(dag_run.conf)
+        
+        metadata = dag_run.conf
+
+        name = metadata['name']
+        version = metadata['version']
+
+        files_folder_path = f'/mnt/mydata/{version}/{name}'
+
+        for file in os.listdir(files_folder_path):
+            os.remove(file)
 
     downloads = download_file.partial().expand(metadata = metadata)
 
     merge_files_obj = merge_files()
     downloads >> merge_files_obj
     
-    send_to_google(merge_files_obj)
+    send_to_google(merge_files_obj) >> delete_files()
 
 
 
