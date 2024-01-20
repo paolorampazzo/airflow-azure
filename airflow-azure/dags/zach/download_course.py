@@ -135,7 +135,7 @@ with DAG(dag_id="download_course",
         
         metadata = dag_run.conf
 
-        error = metadata['error']
+        error = metadata['max_index'] == -1
 
         if error:
             return 'merge_files'
