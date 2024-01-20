@@ -69,7 +69,7 @@ with DAG(dag_id="download_course",
         
             parent_folder_id = PARENT_FOLDER_ID
             folder_path = f'/mnt/mydata/merged_files'
-            filename = {name}-{version}.txt
+            filename = f'{name}-{version}.txt'
             file_path = f'{folder_path}/{filename}'
 
             with open(file_path, 'w') as f:
