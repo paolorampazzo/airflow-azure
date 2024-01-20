@@ -26,7 +26,7 @@ with DAG(dag_id="download_course",
         #  max_active_tasks = 200,
 ) as dag:
     
-    @task(weight_rule='upstream')
+    @task(priority_weight='upstream')
     def get_metadata(**kwargs):
         ti: TaskInstance = kwargs["ti"] 
         dag_run: DagRun = ti.dag_run
@@ -119,7 +119,7 @@ with DAG(dag_id="download_course",
 
         # Save the file 
 
-    @task.branch(weight_rule='upstream', executor_config=define_k8s_specs(claim_name = claim_name,
+    @task.branch(priority_weight='upstream', executor_config=define_k8s_specs(claim_name = claim_name,
                                            node_selector=[{'key': 'kubernetes.azure.com/agentpool',
                                                           'operator': 'NotIn', 'values': ['paolo1']},
                                                           {'key': 'meusystem',
@@ -141,7 +141,7 @@ with DAG(dag_id="download_course",
                 
     
 
-    @task(weight_rule='upstream', executor_config=define_k8s_specs(claim_name = claim_name,
+    @task(priority_weight='upstream', executor_config=define_k8s_specs(claim_name = claim_name,
                                            node_selector=[{'key': 'kubernetes.azure.com/agentpool',
                                                           'operator': 'NotIn', 'values': ['paolo1']},
                                                           {'key': 'meusystem',
@@ -191,7 +191,7 @@ with DAG(dag_id="download_course",
 
         return {'version': version, 'file_path': outfile, 'name': name} 
 
-    @task(weight_rule='upstream', executor_config=define_k8s_specs(claim_name = claim_name,
+    @task(priority_weight='upstream', executor_config=define_k8s_specs(claim_name = claim_name,
                                            node_selector=[{'key': 'kubernetes.azure.com/agentpool',
                                                           'operator': 'NotIn', 'values': ['paolo1']},
                                                           {'key': 'meusystem',
@@ -210,7 +210,7 @@ with DAG(dag_id="download_course",
     metadata = get_metadata()
     # metadata_list = [{**metadata, **{'index': k}} for k in range(metadata['max_index']+1)]
 
-    @task(weight_rule='upstream', executor_config=define_k8s_specs(claim_name = claim_name,
+    @task(priority_weight='upstream', executor_config=define_k8s_specs(claim_name = claim_name,
                                            node_selector=[{'key': 'kubernetes.azure.com/agentpool',
                                                           'operator': 'NotIn', 'values': ['paolo1']},
                                                           {'key': 'meusystem',
