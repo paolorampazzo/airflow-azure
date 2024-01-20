@@ -46,7 +46,7 @@ with DAG(dag_id="prepare_download",
                 - ReadWriteOnce  # or ReadWriteMany, ReadOnlyMany based on your requirements
             resources:
                 requests:
-                    storage: 1Gi  # Specify the amount of storage you need
+                    storage: 3Gi  # Specify the amount of storage you need
         """
 
         resource = yaml.safe_load(yaml_content())
