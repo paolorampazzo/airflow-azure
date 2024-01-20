@@ -22,8 +22,8 @@ PARENT_FOLDER_ID = '1zQJCyZSfCvoechPLgFEDOcKKfM0mQ9ej'
 with DAG(dag_id="download_course", 
          start_date=datetime(2024, 1, 10),
          catchup=False,
-         max_active_runs = 50,
-         max_active_tasks = 200,
+        #  max_active_runs = 50,
+        #  max_active_tasks = 200,
 ) as dag:
     
     @task()
@@ -36,7 +36,7 @@ with DAG(dag_id="download_course",
         metadata = dag_run.conf
 
         max_index = metadata['max_index']
-        max_index = min(max_index, 50)
+        max_index = min(max_index, 20)
 
         if max_index == -1:
             max_index = 0
