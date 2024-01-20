@@ -204,7 +204,7 @@ with DAG(dag_id="download_course",
         
         parent_folder_id = PARENT_FOLDER_ID
         
-        filename = name + '.mp4'
+        filename = '-'.join([name, version]) + '.mp4'
         send_to_drive(version, name, parent_folder_id, file_path, filename, overwrite=True)
 
         
