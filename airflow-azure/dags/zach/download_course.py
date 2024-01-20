@@ -253,7 +253,8 @@ with DAG(dag_id="download_course",
     filter_errors_obj = filter_errors()
     filter_errors_obj >> merge_files_obj
     filter_errors_obj >> finish
-    downloads >> filter_errors_obj >> send_to_google(merge_files_obj) >> delete_files()
+    downloads >> filter_errors_obj
+    send_to_google(merge_files_obj) >> delete_files()
 
 
 
