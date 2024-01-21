@@ -121,7 +121,6 @@ with DAG(dag_id="prepare_download",
         trigger_dag_id="download_course",
         wait_for_completion=True,
         weight_rule='upstream',
-        depends_on_past=True
     )
 
 
