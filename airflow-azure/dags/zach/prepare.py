@@ -89,7 +89,7 @@ with DAG(dag_id="prepare_download",
         with open('/opt/airflow/dags/repo/airflow-azure/dags/zach/pages.pkl', 'rb') as f:
             pages = pickle.load(f)
 
-        return pages[:5]
+        return pages[:10]
     
     @task
     def get_parameters(**kwargs):
