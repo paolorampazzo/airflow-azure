@@ -59,7 +59,9 @@ with DAG(dag_id="download_course",
         from os import makedirs
         import os
 
-        for metadata in metadatas:
+        length = len(metadatas)
+
+        for i, metadata in enumerate(metadatas):
         
             name = metadata['name'] 
             type_ = metadata['type']
@@ -105,7 +107,7 @@ with DAG(dag_id="download_course",
             file_name = f"{type_}{i}.ts"
             file_path = f"{folder_path}/{file_name}"
 
-            print('Downloading', file_name, 'to', file_path)
+            print(f'Downloading {i+1}/{length}', file_name, 'to', file_path)
 
             try:
                 response = get(url, timeout=5)
