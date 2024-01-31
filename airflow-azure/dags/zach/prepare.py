@@ -15,7 +15,7 @@ from airflow.models.dagrun import DagRun
 from airflow.models.taskinstance import TaskInstance
 from airflow.utils.trigger_rule import TriggerRule
 
-SPLIT_PODS = False
+download_task = 'download_course_2'
 
 with DAG(dag_id="prepare_download", 
          start_date=datetime(2024, 1, 10),
@@ -118,7 +118,7 @@ with DAG(dag_id="prepare_download",
     
     download_files = TriggerDagRunOperator.partial(
         task_id="download_files_dag",
-        trigger_dag_id="download_course" if not SPLIT_PODS else "download_course_2",
+        trigger_dag_id=download_task,
         wait_for_completion=True,
         weight_rule='upstream',
     )
