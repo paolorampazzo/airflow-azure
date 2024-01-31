@@ -246,7 +246,7 @@ with DAG(dag_id="download_course",
 
     finish = DummyOperator(task_id="finish")
 
-    downloads = download_files(metadata = metadatas)
+    downloads = download_files(metadatas = metadatas)
 
     merge_files_obj = merge_files()
     filter_errors_obj = filter_errors()
