@@ -19,7 +19,7 @@ from airflow.models import Variable
 PARENT_FOLDER_ID = '1zQJCyZSfCvoechPLgFEDOcKKfM0mQ9ej'
 
 
-with DAG(dag_id="download_course", 
+with DAG(dag_id="download_course_2", 
          start_date=datetime(2024, 1, 10),
          catchup=False,
          max_active_runs=1
