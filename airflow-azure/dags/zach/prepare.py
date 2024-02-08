@@ -28,7 +28,7 @@ with DAG(dag_id="prepare_download",
      },
 ) as dag:
     
-    @task
+    @task(executor_config=define_k8s_specs())
     def kubectl():
         from kubernetes import config, client
         import yaml
@@ -67,7 +67,7 @@ with DAG(dag_id="prepare_download",
         print(content)
 
     # @task(trigger_rule=TriggerRule.ONE_DONE)
-    @task()
+    @task(executor_config=define_k8s_specs())
     def delete_pvc():
 
         from kubernetes import config, client
@@ -83,7 +83,7 @@ with DAG(dag_id="prepare_download",
         v1.delete_namespaced_persistent_volume_claim(namespace="airflow-azure-workers", name=claim_name)
         v1.patch_namespaced_persistent_volume_claim(name=claim_name, namespace="airflow-azure-workers", 
                                                     body=patch_payload)
-    @task
+    @task(executor_config=define_k8s_specs())
     def get_links():
         import pickle
         with open('/opt/airflow/dags/repo/airflow-azure/dags/zach/pages.pkl', 'rb') as f:
@@ -91,7 +91,7 @@ with DAG(dag_id="prepare_download",
 
         return pages[:20]
     
-    @task
+    @task(executor_config=define_k8s_specs())
     def get_parameters(**kwargs):
         import requests
         import json
